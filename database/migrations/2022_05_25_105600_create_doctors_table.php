@@ -19,6 +19,7 @@ class CreateDoctorsTable extends Migration
             $table->string('last_name');
             $table->string('profession');
             $table->foreignId('hospital_id')->constrained('hospitals');
+            $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
     }

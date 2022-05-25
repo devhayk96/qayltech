@@ -19,6 +19,7 @@ class CreateOrganizationsTable extends Migration
             $table->string('address');
             $table->foreignId('category_id')->constrained('categories');
             $table->foreignId('country_id')->constrained('countries');
+            $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
     }
