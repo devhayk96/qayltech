@@ -18,4 +18,9 @@ class Country extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function organization()
+    {
+        return $this->hasMany(Organization::class);
+    }
 }
