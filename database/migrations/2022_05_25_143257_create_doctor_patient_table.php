@@ -19,7 +19,7 @@ class CreateDoctorPatientTable extends Migration
             $table->foreignId('patient_id')->constrained('patients');
             $table->foreignId('device_id')->constrained('devices');
             $table->timestamp('workout_start');
-            $table->timestamp('workout_end');
+            $table->timestamp('workout_end')->nullable();
             $table->timestamps();
         });
     }
