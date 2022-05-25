@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
-use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Validator;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends BaseController
 {
     /**
      * Register api
      *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function register(Request $request)
     {
@@ -40,18 +42,29 @@ class AuthController extends BaseController
     /**
      * Login api
      *
-     * @return \Illuminate\Http\Response
+     * @param LoginRequest $request
+     * @return Response
      */
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = Auth::user();
-            $success['token'] = $user->createToken('MyApp')->accessToken;
-            $success['name'] = $user->name;
-
-            return $this->sendResponse($success, 'User login successfully.');
-        } else {
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
+        if ($user = User::where('email', $request->get('email'))->first()) {
+            if (Hash::check($request->get('password'), $user->password)) {
+                $token = $user->createToken('Qayl Tech Login')->accessToken;
+                $response = ['token' => $token];
+                return response($response, 200);
+            } else {
+                return response(["message" => "Password mismatch"], 422);
+            }
         }
+
+        return response(["message" => 'User does not exist'], 422);
+    }
+
+    public function logout (Request $request)
+    {
+        $token = $request->user()->token();
+        $token->revoke();
+        $response = ['message' => 'You have been successfully logged out!'];
+        return response($response, 200);
     }
 }
