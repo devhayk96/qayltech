@@ -27,9 +27,9 @@ class Patient extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function doctor()
+    public function doctors()
     {
-        return $this->hasOne(Doctor::class);
+        return $this->hasMany(Doctor::class);
     }
 
     public function devices()

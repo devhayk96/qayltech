@@ -30,8 +30,4 @@ class Doctor extends Model
         return $this->hasMany(Patient::class);
     }
 
-    public function devices()
-    {
-        return $this->hasMany(Device::class);
-    }
 }
