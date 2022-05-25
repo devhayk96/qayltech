@@ -15,11 +15,23 @@ class Doctor extends Model
         'hospital_id'
     ];
 
-    public function hospital(){
+    public function hospital()
+    {
         return $this->belongsTo(Hospital::class);
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
+    }
+
+    public function patients()
+    {
+        return $this->hasMany(Patient::class);
+    }
+
+    public function devices()
+    {
+        return $this->hasMany(Device::class);
     }
 }

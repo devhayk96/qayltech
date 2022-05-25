@@ -14,11 +14,14 @@ class Device extends Model
         'hospital_id'
     ];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function hospital(){
+    public function hospital()
+    {
         return $this->belongsTo(Hospital::class);
     }
+
 }

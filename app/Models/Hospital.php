@@ -15,15 +15,22 @@ class Hospital extends Model
         'organization_id'
     ];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function category(){
+    public function category()
+    {
         return $this->hasOne(Category::class);
     }
 
-    public function organization(){
+    public function organization()
+    {
         return $this->belongsTo(Organization::class);
+    }
+    public function devices()
+    {
+        return $this->hasMany(Device::class);
     }
 }
