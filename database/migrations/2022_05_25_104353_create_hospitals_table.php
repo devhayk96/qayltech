@@ -19,6 +19,7 @@ class CreateHospitalsTable extends Migration
             $table->string('address');
             $table->foreignId('category_id')->constrained('categories');
             $table->foreignId('organization_id')->nullable()->constrained('organizations');
+            $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
     }
