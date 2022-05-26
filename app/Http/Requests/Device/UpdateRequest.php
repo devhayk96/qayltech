@@ -14,7 +14,7 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'code' => 'required|number',
+            'code' => 'required|string',
             'user_id' => 'required|number',
             'hospital_id' => 'required|number',
         ];
