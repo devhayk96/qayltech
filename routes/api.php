@@ -26,17 +26,18 @@ Route::middleware('auth:api')->group(function () {
         return $request->user();
     });
 
+    Route::resource('categories', CategoriesController::class);
+    Route::resource('countries', CountriesController::class);
+    Route::resource('devices', DevicesController::class);
+    Route::resource('doctors', DoctorsController::class);
+    Route::resource('hospitals', HospitalsController::class);
+    Route::resource('organizations', OrganizationsController::class);
+    Route::resource('patients', PatientsController::class);
+
     Route::post('logout', [AuthController::class, 'logout']);
 });
 
 Route::group(['middleware' => ['cors', 'json.response']], function () {
     Route::post('login', [AuthController::class, 'login']);
-    Route::resource('categories', [CategoriesController::class]);
-    Route::resource('countries', [CountriesController::class]);
-    Route::resource('devices', [DevicesController::class]);
-    Route::resource('doctors', [DoctorsController::class]);
-    Route::resource('hospitals', [HospitalsController::class]);
-    Route::resource('organizations', [OrganizationsController::class]);
-    Route::resource('patients', [PatientsController::class]);
 //    Route::post('register','Auth\ApiAuthController@register');
 });
