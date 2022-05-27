@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Organization;
 use Illuminate\Http\Request;
 
 class OrganizationsController extends Controller
@@ -11,9 +12,11 @@ class OrganizationsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $country_id = $request->country_id;
+        $organizations = Organization::all()->where('country_id', '=', $country_id);
+        return $organizations;
     }
 
     /**

@@ -36,7 +36,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::post('logout', [AuthController::class, 'logout']);
 });
-
+Route::resource('countries', CountriesController::class);
 Route::group(['middleware' => ['cors', 'json.response']], function () {
     Route::post('login', [AuthController::class, 'login']);
 //    Route::post('register','Auth\ApiAuthController@register');

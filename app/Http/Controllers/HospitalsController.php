@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Hospital;
 use Illuminate\Http\Request;
 
 class HospitalsController extends Controller
@@ -11,9 +12,15 @@ class HospitalsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $country_id = $request->country_id;
+        $query = Hospital::all()->where('country_id', '=', $country_id);
+        if ($request->organization_id){
+            $organization_id = $request->organization_id;
+            $query = $query->where('organization_id', '=', $organization_id);
+        }
+        return $query;
     }
 
     /**
