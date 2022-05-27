@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Doctor;
 use Illuminate\Http\Request;
 
 class DoctorsController extends Controller
@@ -11,9 +12,11 @@ class DoctorsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $hospital_id = $request->hospital_id;
+        $doctors = Doctor::all()->where('hospital_id', '=', $hospital_id);
+        return $doctors;
     }
 
     /**

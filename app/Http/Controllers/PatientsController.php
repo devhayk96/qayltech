@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Patient;
 use Illuminate\Http\Request;
 
 class PatientsController extends Controller
@@ -11,9 +12,15 @@ class PatientsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $doctor_id = $request->doctor_id;
+        $query = Patient::all()->where('doctor_id', '=', $doctor_id);
+        if ($request->is_individual){
+            $is_individual = $request->is_individual;
+            $query = $query->where('is_individual', '=', $is_individual);
+        }
+        return $query;
     }
 
     /**
