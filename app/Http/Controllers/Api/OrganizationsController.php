@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use App\Models\Organization;
 use Illuminate\Http\Request;
 
-class OrganizationsController extends Controller
+class OrganizationsController extends BaseController
 {
     /**
      * Display a listing of the resource.

@@ -1,43 +1,72 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Http\Requests\Country\StoreRequest;
 use App\Models\Country;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
-class CountriesController extends Controller
+class CountriesController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function __construct()
     {
-        $countries = Country::all();
-        return $countries;
+        $this->middleware('hasAccess')->only('index', 'store', 'update');
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Return a listing of the countries.
      *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function create()
+    public function index(Request $request)
     {
-        //
+        $countries = Country::query();
+
+        if ($countryName = $request->get('name')) {
+            $countries->where('name', 'LIKE', $countryName .'%');
+        }
+
+        return $this->sendResponse($countries, 'Countries List');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created country in database.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param StoreRequest $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $countryUser = User::create([
+                'role_id' => Role::ALL['country'],
+                'name' => $request->get('name'),
+                'email' => $request->get('email'),
+                'password' => Hash::make(Str::random(8))
+            ]);
+
+            $country = Country::create([
+                'name' => $request->get('name'),
+                'user_id' => current_user()->id
+            ]);
+
+            DB::commit();
+            return $this->sendResponse($countryUser, 'Country user successfully created');
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return $this->sendError('Something went wrong', 500, [$exception->getMessage()]);
+        }
     }
+
 
     /**
      * Display the specified resource.
@@ -50,8 +79,9 @@ class CountriesController extends Controller
         //
     }
 
+
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified country.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response

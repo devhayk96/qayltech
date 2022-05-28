@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 
-class DevicesController extends Controller
+class DevicesController extends BaseController
 {
     /**
      * Display a listing of the resource.

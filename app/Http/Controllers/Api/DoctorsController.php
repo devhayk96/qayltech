@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\API\BaseController;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 
-class DoctorsController extends Controller
+class DoctorsController extends BaseController
 {
     /**
      * Display a listing of the resource.

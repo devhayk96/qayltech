@@ -1,15 +1,15 @@
 <?php
 
+use App\Http\Controllers\API\CategoriesController;
+use App\Http\Controllers\API\CountriesController;
+use App\Http\Controllers\API\DevicesController;
+use App\Http\Controllers\API\DoctorsController;
+use App\Http\Controllers\API\HospitalsController;
+use App\Http\Controllers\API\OrganizationsController;
+use App\Http\Controllers\API\PatientsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\CategoriesController;
-use App\Http\Controllers\CountriesController;
-use App\Http\Controllers\DevicesController;
-use App\Http\Controllers\DoctorsController;
-use App\Http\Controllers\HospitalsController;
-use App\Http\Controllers\OrganizationsController;
-use App\Http\Controllers\PatientsController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
