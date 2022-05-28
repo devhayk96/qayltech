@@ -19,7 +19,8 @@ class Patient extends Model
         'workout_begin',
         'is_individual',
         'image',
-        'pdf'
+        'pdf',
+        'user_id',
     ];
 
     public function user()

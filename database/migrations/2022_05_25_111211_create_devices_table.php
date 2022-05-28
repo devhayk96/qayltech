@@ -17,7 +17,6 @@ class CreateDevicesTable extends Migration
             $table->id();
             $table->string('code');
             $table->foreignId('hospital_id')->nullable()->constrained('hospitals');
-            $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
     }

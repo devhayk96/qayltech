@@ -12,7 +12,9 @@ class Hospital extends Model
         'name',
         'address',
         'category_id',
-        'organization_id'
+        'organization_id',
+        'country_id',
+        'user_id',
     ];
 
     public function user()

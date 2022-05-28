@@ -2,8 +2,15 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\Hospital\StoreRequest;
 use App\Models\Hospital;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class HospitalsController extends BaseController
 {
@@ -34,14 +41,38 @@ class HospitalsController extends BaseController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created hospital in database.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param StoreRequest $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $hospitalUser = User::create([
+                'role_id' => Role::ALL['hospital'],
+                'name' => $request->get('name'),
+                'email' => $request->get('email'),
+                'password' => Hash::make(Str::random(8))
+            ]);
+
+            $hospital = Hospital::create([
+                'name' => $request->get('name'),
+                'address' => $request->get('address'),
+                'category_id' => $request->get('category_id'),
+                'organization_id' => $request->get('organization_id'),
+                'country_id' => $request->get('country_id'),
+                'user_id' => $hospitalUser->id
+            ]);
+
+            DB::commit();
+            return $this->sendResponse($hospitalUser, 'Hospital user successfully created');
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return $this->sendError('Something went wrong', 500, [$exception->getMessage()]);
+        }
     }
 
     /**

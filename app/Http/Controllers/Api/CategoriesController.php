@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\Category\StoreRequest;
+use App\Models\Category;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoriesController extends BaseController
 {
@@ -27,14 +31,27 @@ class CategoriesController extends BaseController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created category in database.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param StoreRequest $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $category = Category::create([
+                'name' => $request->get('name'),
+                'type' => $request->get('type'),
+            ]);
+
+            DB::commit();
+            return $this->sendResponse($category, 'Category successfully created');
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return $this->sendError('Something went wrong', 500, [$exception->getMessage()]);
+        }
     }
 
     /**

@@ -19,10 +19,10 @@ class CreatePatientsTable extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->timestamp('birth_date');
-            $table->date('disability_date')->comment('հաշմանդամություն ձեռք բերելու տարեթիվ');
-            $table->string('disability_reason')->comment('հաշմանդամություն ձեռք բերելու պատճառ');
-            $table->string('disability_category')->comment('հաշմանդամության կարգ');
-            $table->string('injury')->comment('վնասվածք');
+            $table->date('disability_date')->nullable()->comment('հաշմանդամություն ձեռք բերելու տարեթիվ');
+            $table->string('disability_reason')->nullable()->comment('հաշմանդամություն ձեռք բերելու պատճառ');
+            $table->string('disability_category')->nullable()->comment('հաշմանդամության կարգ');
+            $table->string('injury')->nullable()->comment('վնասվածք');
             $table->date('workout_begin')->nullable()->comment('երբ է ձեռք բերել սարք կամ երբ է սկսել պարապել');
             $table->boolean('is_individual')->comment('անհատական շահառու');
             $table->string('image')->nullable();
