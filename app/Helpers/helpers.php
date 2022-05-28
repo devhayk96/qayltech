@@ -67,8 +67,8 @@ if (!function_exists('image_exists')) {
 if (! function_exists('current_user')) {
     function current_user()
     {
-        return auth()->check()
-            ? User::find(auth()->user()->id)->load(['role'])
+        return auth('api')->check()
+            ? User::find(auth('api')->user()->id)->load(['role'])
             : null;
     }
 }
