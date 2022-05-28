@@ -16,7 +16,7 @@ class CountriesController extends BaseController
 {
     public function __construct()
     {
-        $this->middleware('hasAccess')->only('index', 'store', 'update');
+//        $this->middleware('hasAccess')->only('index', 'store', 'update');
     }
 
     /**
@@ -28,11 +28,9 @@ class CountriesController extends BaseController
     public function index(Request $request)
     {
         $countries = Country::query();
-
         if ($countryName = $request->get('name')) {
             $countries->where('name', 'LIKE', $countryName .'%');
         }
-
         return $this->sendResponse($countries, 'Countries List');
     }
 
@@ -56,7 +54,7 @@ class CountriesController extends BaseController
 
             $country = Country::create([
                 'name' => $request->get('name'),
-                'user_id' => current_user()->id
+                'user_id' => $countryUser->id
             ]);
 
             DB::commit();

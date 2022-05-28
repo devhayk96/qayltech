@@ -2,8 +2,16 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\Organization\StoreRequest;
 use App\Models\Organization;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
 
 class OrganizationsController extends BaseController
 {
@@ -14,6 +22,7 @@ class OrganizationsController extends BaseController
      */
     public function index(Request $request)
     {
+        dd($request);
         $country_id = $request->country_id;
         $organizations = Organization::all()->where('country_id', '=', $country_id);
         return $organizations;
@@ -30,14 +39,37 @@ class OrganizationsController extends BaseController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created organization in database.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param StoreRequest $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $organizationUser = User::create([
+                'role_id' => Role::ALL['organization'],
+                'name' => $request->get('name'),
+                'email' => $request->get('email'),
+                'password' => Hash::make(Str::random(8))
+            ]);
+
+            $organization = Organization::create([
+                'name' => $request->get('name'),
+                'address' => $request->get('address'),
+                'category_id' => $request->get('category_id'),
+                'country_id' => $request->get('category_id'),
+                'user_id' => $organizationUser->id
+            ]);
+
+            DB::commit();
+            return $this->sendResponse($organizationUser, 'Organization user successfully created');
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return $this->sendError('Something went wrong', 500, [$exception->getMessage()]);
+        }
     }
 
     /**

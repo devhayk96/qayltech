@@ -15,10 +15,10 @@ class StoreRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'email' => 'required|unique:users',
             'address' => 'required|string|max:255',
-            'category_id' => 'required|number',
-            'country_id' => 'required|number',
-            'user_id' => 'required|number',
+            'category_id' => 'required|exists:categories,id',
+            'country_id' => 'required|exists:countries,id',
         ];
     }
 }
