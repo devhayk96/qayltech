@@ -12,7 +12,8 @@ class Doctor extends Model
         'first_name',
         'last_name',
         'profession',
-        'hospital_id'
+        'hospital_id',
+        'user_id',
     ];
 
     public function hospital()

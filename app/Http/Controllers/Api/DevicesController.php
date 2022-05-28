@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\Device\StoreRequest;
+use App\Models\Device;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DevicesController extends BaseController
 {
@@ -27,14 +31,27 @@ class DevicesController extends BaseController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created device in database.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param StoreRequest $request
+     * @return JsonResponse
      */
     public function store(Request $request)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $device = Device::create([
+                'code' => $request->get('code'),
+                'hospital_id' => $request->get('hospital_id'),
+            ]);
+
+            DB::commit();
+            return $this->sendResponse($device, 'Device successfully created');
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return $this->sendError('Something went wrong', 500, [$exception->getMessage()]);
+        }
     }
 
     /**

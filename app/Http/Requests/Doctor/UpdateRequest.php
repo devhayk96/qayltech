@@ -17,7 +17,8 @@ class UpdateRequest extends FormRequest
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'profession' => 'required|string|max:255',
-            'hospital_id' => 'required|number',
+            'hospital_id' => 'required|exists:hospitals,id',
+            'email' => 'required|unique:users',
         ];
     }
 }

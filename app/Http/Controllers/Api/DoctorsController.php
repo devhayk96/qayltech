@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\API\BaseController;
+use App\Http\Requests\Doctor\StoreRequest;
 use App\Models\Doctor;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DoctorsController extends BaseController
 {
@@ -31,14 +37,37 @@ class DoctorsController extends BaseController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created doctor in database.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param StoreRequest $request
+     * @return JsonResponse
      */
     public function store(Request $request)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $doctorUser = User::create([
+                'role_id' => Role::ALL['doctor'],
+                'name' => $request->get('first_name'),
+                'email' => $request->get('email'),
+                'password' => Hash::make(Str::random(8))
+            ]);
+
+            $doctor = Doctor::create([
+                'first_name' => $request->get('first_name'),
+                'last_name' => $request->get('last_name'),
+                'profession' => $request->get('profession'),
+                'hospital_id' => $request->get('hospital_id'),
+                'user_id' => $doctorUser->id
+            ]);
+
+            DB::commit();
+            return $this->sendResponse($doctorUser, 'Doctor user successfully created');
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return $this->sendError('Something went wrong', 500, [$exception->getMessage()]);
+        }
     }
 
     /**

@@ -15,8 +15,7 @@ class UpdateRequest extends FormRequest
     {
         return [
             'code' => 'required|string',
-            'user_id' => 'required|number',
-            'hospital_id' => 'required|number',
+            'hospital_id' => 'required|exists:hospitals,id',
         ];
     }
 }
