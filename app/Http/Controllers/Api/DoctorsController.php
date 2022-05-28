@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
-use App\Models\Hospital;
+use App\Http\Controllers\API\BaseController;
+use App\Models\Doctor;
 use Illuminate\Http\Request;
 
-class HospitalsController extends Controller
+class DoctorsController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -14,13 +15,9 @@ class HospitalsController extends Controller
      */
     public function index(Request $request)
     {
-        $country_id = $request->country_id;
-        $query = Hospital::all()->where('country_id', '=', $country_id);
-        if ($request->organization_id){
-            $organization_id = $request->organization_id;
-            $query = $query->where('organization_id', '=', $organization_id);
-        }
-        return $query;
+        $hospital_id = $request->hospital_id;
+        $doctors = Doctor::all()->where('hospital_id', '=', $hospital_id);
+        return $doctors;
     }
 
     /**

@@ -1,22 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
-use App\Models\Organization;
 use Illuminate\Http\Request;
 
-class OrganizationsController extends Controller
+class DevicesController extends BaseController
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $country_id = $request->country_id;
-        $organizations = Organization::all()->where('country_id', '=', $country_id);
-        return $organizations;
+        //
     }
 
     /**
