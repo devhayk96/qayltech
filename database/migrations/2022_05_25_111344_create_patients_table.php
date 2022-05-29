@@ -15,6 +15,9 @@ class CreatePatientsTable extends Migration
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('country_id')->constrained('countries');
+            $table->foreignId('organization_id')->nullable()->constrained('organizations');
+            $table->foreignId('hospital_id')->nullable()->constrained('hospitals');
             $table->foreignId('user_id')->constrained('users');
             $table->string('first_name');
             $table->string('last_name');

@@ -2,38 +2,40 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\Doctor\ListRequest;
 use App\Http\Requests\Doctor\StoreRequest;
 use App\Models\Doctor;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class DoctorsController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
+    public function __construct()
     {
-        $hospital_id = $request->hospital_id;
-        $doctors = Doctor::all()->where('hospital_id', '=', $hospital_id);
-        return $doctors;
+        $this->middleware('hasAccess')->except('show');
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param ListRequest $request
+     * @return JsonResponse
      */
-    public function create()
+    public function index(ListRequest $request)
     {
-        //
+        $doctors = Doctor::query()
+            ->where('hospital_id', $request->get('hospitalId'));
+
+        if ($doctorName = $request->get('name')) {
+            $doctors->where('name', 'LIKE', $doctorName .'%');
+        }
+        return $this->sendResponse($doctors->get(), 'List of doctors');
     }
 
     /**
@@ -42,28 +44,31 @@ class DoctorsController extends BaseController
      * @param StoreRequest $request
      * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
         DB::beginTransaction();
 
         try {
+            $firstName = $request->get('firstName');
+            $lastName = $request->get('lastName');
+
             $doctorUser = User::create([
                 'role_id' => Role::ALL['doctor'],
-                'name' => $request->get('first_name'),
+                'name' => "$firstName $lastName",
                 'email' => $request->get('email'),
                 'password' => Hash::make(Str::random(8))
             ]);
 
             $doctor = Doctor::create([
-                'first_name' => $request->get('first_name'),
-                'last_name' => $request->get('last_name'),
+                'first_name' => $firstName,
+                'last_name' => $lastName,
                 'profession' => $request->get('profession'),
-                'hospital_id' => $request->get('hospital_id'),
+                'hospital_id' => $request->get('hospitalId'),
                 'user_id' => $doctorUser->id
             ]);
 
             DB::commit();
-            return $this->sendResponse($doctorUser, 'Doctor user successfully created');
+            return $this->sendResponse($doctorUser, 'Doctor successfully created');
         } catch (\Exception $exception) {
             DB::rollBack();
             return $this->sendError('Something went wrong', 500, [$exception->getMessage()]);
@@ -74,7 +79,7 @@ class DoctorsController extends BaseController
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($id)
     {
@@ -85,7 +90,7 @@ class DoctorsController extends BaseController
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit($id)
     {
@@ -97,7 +102,7 @@ class DoctorsController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -108,7 +113,7 @@ class DoctorsController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy($id)
     {

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Country;
+namespace App\Http\Requests\Doctor;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends FormRequest
+class ListRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,8 +14,8 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|unique:countries|string|max:90',
-            'email' => 'required|unique:users',
+            'hospitalId' => 'required|exists:hospitals,id',
+            'name' => 'nullable|string|max:90',
         ];
     }
 }
