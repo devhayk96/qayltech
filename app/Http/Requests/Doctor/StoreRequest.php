@@ -14,10 +14,10 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'firstName' => 'required|string|max:255',
+            'lastName' => 'required|string|max:255',
             'profession' => 'required|string|max:255',
-            'hospital_id' => 'required|exists:hospitals,id',
+            'hospitalId' => 'required|exists:hospitals,id',
             'email' => 'required|unique:users',
         ];
     }

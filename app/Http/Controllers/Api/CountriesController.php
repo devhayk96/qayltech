@@ -16,7 +16,7 @@ class CountriesController extends BaseController
 {
     public function __construct()
     {
-//        $this->middleware('hasAccess')->only('index', 'store', 'update');
+        $this->middleware('hasAccess')->except('show');
     }
 
     /**
@@ -31,7 +31,7 @@ class CountriesController extends BaseController
         if ($countryName = $request->get('name')) {
             $countries->where('name', 'LIKE', $countryName .'%');
         }
-        return $this->sendResponse($countries, 'Countries List');
+        return $this->sendResponse($countries->get(), 'Countries List');
     }
 
     /**

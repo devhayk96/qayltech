@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\Device\StoreRequest;
+use App\Http\Requests\Device\ListRequest;
 use App\Models\Device;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -10,14 +11,26 @@ use Illuminate\Support\Facades\DB;
 
 class DevicesController extends BaseController
 {
+    public function __construct()
+    {
+        $this->middleware('hasAccess')->except('show');
+    }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param ListRequest $request
+     * @return JsonResponse
      */
-    public function index()
+    public function index(ListRequest $request)
     {
-        //
+        $devices = Device::query();
+
+        if ($hospitalId = $request->get('hospitalId')) {
+            $devices->where('hospital_id', $hospitalId);
+        }
+
+        return $this->sendResponse($devices->get(), 'List of devices');
     }
 
     /**

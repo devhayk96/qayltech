@@ -4,7 +4,7 @@ namespace App\Http\Requests\Device;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends FormRequest
+class ListRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
