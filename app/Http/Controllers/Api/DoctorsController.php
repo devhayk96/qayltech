@@ -52,7 +52,7 @@ class DoctorsController extends BaseController
             $firstName = $request->get('firstName');
             $lastName = $request->get('lastName');
 
-            $request->merge(['role_id' => Role::ALL['country'], 'name' => "$firstName $lastName"]);
+            $request->merge(['role_id' => Role::ALL['doctor'], 'name' => "$firstName $lastName"]);
             $doctorUser = (new StoreService($request))->run();
 
             $doctor = Doctor::create([
