@@ -24,7 +24,11 @@ class DevicesController extends BaseController
      */
     public function index(ListRequest $request)
     {
-        $devices = Device::query();
+        $devices = Device::query()->where('countryId', $request->get('countryId'));
+
+        if ($organizationId = $request->get('organizationId')) {
+            $devices->where('hospital_id', $organizationId);
+        }
 
         if ($hospitalId = $request->get('hospitalId')) {
             $devices->where('hospital_id', $hospitalId);

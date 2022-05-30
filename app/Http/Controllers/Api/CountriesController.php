@@ -48,7 +48,7 @@ class CountriesController extends BaseController
 
         try {
             $request->merge(['role_id' => Role::ALL['country']]);
-            $countryUser = (new StoreService($request));
+            $countryUser = (new StoreService($request))->run();
 
             $country = Country::create([
                 'name' => $countryUser['name'],
