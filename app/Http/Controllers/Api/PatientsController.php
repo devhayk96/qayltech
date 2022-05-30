@@ -51,23 +51,22 @@ class PatientsController extends BaseController
         DB::beginTransaction();
 
         try {
-            $patientUser = User::create([
-                'role_id' => Role::ALL['patient'],
-                'name' => $request->get('first_name'),
-                'email' => $request->get('email'),
-                'password' => Hash::make(Str::random(8))
-            ]);
+            $firstName = $request->get('firstName');
+            $lastName = $request->get('lastName');
+
+            $request->merge(['role_id' => Role::ALL['patient'], 'name' => "$firstName $lastName"]);
+            $patientUser = (new StoreService($request))->run();
 
             $patient = Patient::create([
-                'first_name' => $request->get('first_name'),
-                'last_name' => $request->get('last_name'),
-                'birth_date' => $request->get('birth_date'),
-                'disability_date' => $request->get('disability_date'),
-                'disability_reason' => $request->get('disability_reason'),
-                'disability_category' => $request->get('disability_category'),
-                'workout_begin' => $request->get('workout_begin'),
+                'first_name' => $request->get('firstName'),
+                'last_name' => $request->get('lastName'),
+                'birth_date' => $request->get('birthDate'),
+                'disability_date' => $request->get('disabilityDate'),
+                'disability_reason' => $request->get('disabilityReason'),
+                'disability_category' => $request->get('disabilityCategory'),
+                'workout_begin' => $request->get('workoutBegin'),
                 'injury' => $request->get('injury'),
-                'is_individual' => $request->get('is_individual'),
+                'is_individual' => $request->get('isIndividual'),
                 'image' => $request->get('image'),
                 'pdf' => $request->get('pdf'),
                 'user_id' => $patientUser->id

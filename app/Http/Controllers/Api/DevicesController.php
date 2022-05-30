@@ -53,14 +53,16 @@ class DevicesController extends BaseController
      * @param StoreRequest $request
      * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         DB::beginTransaction();
 
         try {
             $device = Device::create([
                 'code' => $request->get('code'),
-                'hospital_id' => $request->get('hospital_id'),
+                'hospital_id' => $request->get('hospitalId'),
+                'country_id' => $request->get('countryId'),
+                'organization_id' => $request->get('organizationId'),
             ]);
 
             DB::commit();

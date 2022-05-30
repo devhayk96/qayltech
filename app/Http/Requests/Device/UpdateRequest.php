@@ -14,8 +14,10 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'code' => 'required|string',
-            'hospital_id' => 'required|exists:hospitals,id',
+            'countryId' => 'required|exists:countries,id',
+            'organizationId' => 'nullable|exists:organizations,id',
+            'hospitalId' => 'nullable|exists:hospitals,id',
+            'code' => 'required|string|unique:devices,code',
         ];
     }
 }

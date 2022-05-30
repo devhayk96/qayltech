@@ -46,24 +46,20 @@ class HospitalsController extends BaseController
      * @param StoreRequest $request
      * @return JsonResponse
      */
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request): JsonResponse
     {
         DB::beginTransaction();
 
         try {
-            $hospitalUser = User::create([
-                'role_id' => Role::ALL['hospital'],
-                'name' => $request->get('name'),
-                'email' => $request->get('email'),
-                'password' => Hash::make(Str::random(8))
-            ]);
+            $request->merge(['role_id' => Role::ALL['hospital']]);
+            $hospitalUser = (new StoreService($request))->run();
 
             $hospital = Hospital::create([
                 'name' => $request->get('name'),
                 'address' => $request->get('address'),
-                'category_id' => $request->get('category_id'),
-                'organization_id' => $request->get('organization_id'),
-                'country_id' => $request->get('country_id'),
+                'category_id' => $request->get('categoryId'),
+                'organization_id' => $request->get('organizationId'),
+                'country_id' => $request->get('countryId'),
                 'user_id' => $hospitalUser->id
             ]);
 

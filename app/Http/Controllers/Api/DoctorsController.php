@@ -44,7 +44,7 @@ class DoctorsController extends BaseController
      * @param StoreRequest $request
      * @return JsonResponse
      */
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request): JsonResponse
     {
         DB::beginTransaction();
 
@@ -52,12 +52,8 @@ class DoctorsController extends BaseController
             $firstName = $request->get('firstName');
             $lastName = $request->get('lastName');
 
-            $doctorUser = User::create([
-                'role_id' => Role::ALL['doctor'],
-                'name' => "$firstName $lastName",
-                'email' => $request->get('email'),
-                'password' => Hash::make(Str::random(8))
-            ]);
+            $request->merge(['role_id' => Role::ALL['doctor'], 'name' => "$firstName $lastName"]);
+            $doctorUser = (new StoreService($request))->run();
 
             $doctor = Doctor::create([
                 'first_name' => $firstName,

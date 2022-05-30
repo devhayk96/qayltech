@@ -14,15 +14,15 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'birth_date' => 'required|date',
-            'disability_date' => 'date',
-            'disability_reason' => 'text',
-            'disability_category' => 'string',
+            'firstName' => 'required|string|max:255',
+            'lastName' => 'required|string|max:255',
+            'birthDate' => 'required|date',
+            'disabilityDate' => 'date',
+            'disabilityReason' => 'text',
+            'disabilityCategory' => 'string',
             'injury' => 'string|max:255',
-            'workout_begin' => 'required|date',
-            'is_individual' => 'required|boolean',
+            'workoutBegin' => 'required|date',
+            'isIndividual' => 'required|boolean',
             'image' => 'required|string|max:255',
             'pdf' => 'required|string|max:255',
         ];

@@ -16,6 +16,7 @@ class ListRequest extends FormRequest
         return [
             'hospitalId' => 'required|exists:hospitals,id',
             'name' => 'nullable|string|max:90',
+            'email' => 'required|unique:users',
         ];
     }
 }

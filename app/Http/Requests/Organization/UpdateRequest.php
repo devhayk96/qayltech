@@ -17,8 +17,8 @@ class UpdateRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|unique:users',
             'address' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'country_id' => 'required|exists:countries,id',
+            'categoryId' => 'required|exists:categories,id',
+            'countryId' => 'required|exists:countries,id',
         ];
     }
 }
