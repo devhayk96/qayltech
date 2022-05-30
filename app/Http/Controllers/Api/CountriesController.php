@@ -25,7 +25,7 @@ class CountriesController extends BaseController
      * @param Request $request
      * @return JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $countries = Country::query();
         if ($countryName = $request->get('name')) {
@@ -40,7 +40,7 @@ class CountriesController extends BaseController
      * @param StoreRequest $request
      * @return JsonResponse
      */
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request): JsonResponse
     {
         DB::beginTransaction();
 
@@ -67,26 +67,18 @@ class CountriesController extends BaseController
 
 
     /**
-     * Display the specified resource.
+     * Return the specified country.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
-        //
-    }
+        if ($country = Country::find($id)) {
+            return $this->sendResponse($country, $country->name);
+        }
 
-
-    /**
-     * Show the form for editing the specified country.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return $this->sendError('Country not found');
     }
 
     /**
