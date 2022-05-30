@@ -16,9 +16,9 @@ class UpdateRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'organization_id' => 'required|exists:organizations,id',
-            'country_id' => 'required|exists:countries,id',
+            'categoryId' => 'required|exists:categories,id',
+            'organizationId' => 'required|exists:organizations,id',
+            'countryId' => 'required|exists:countries,id',
             'email' => 'required|unique:users',
         ];
     }

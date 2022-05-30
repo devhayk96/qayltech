@@ -22,7 +22,6 @@ class OrganizationsController extends BaseController
      */
     public function index(Request $request)
     {
-        dd($request);
         $country_id = $request->country_id;
         $organizations = Organization::all()->where('country_id', '=', $country_id);
         return $organizations;
@@ -44,23 +43,19 @@ class OrganizationsController extends BaseController
      * @param StoreRequest $request
      * @return JsonResponse
      */
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request): JsonResponse
     {
         DB::beginTransaction();
 
         try {
-            $organizationUser = User::create([
-                'role_id' => Role::ALL['organization'],
-                'name' => $request->get('name'),
-                'email' => $request->get('email'),
-                'password' => Hash::make(Str::random(8))
-            ]);
+            $request->merge(['role_id' => Role::ALL['organization']]);
+            $organizationUser = (new StoreService($request))->run();
 
             $organization = Organization::create([
                 'name' => $request->get('name'),
                 'address' => $request->get('address'),
-                'category_id' => $request->get('category_id'),
-                'country_id' => $request->get('category_id'),
+                'category_id' => $request->get('categoryId'),
+                'country_id' => $request->get('categoryId'),
                 'user_id' => $organizationUser->id
             ]);
 

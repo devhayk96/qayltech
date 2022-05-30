@@ -36,7 +36,7 @@ class CategoriesController extends BaseController
      * @param StoreRequest $request
      * @return JsonResponse
      */
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request): JsonResponse
     {
         DB::beginTransaction();
 
