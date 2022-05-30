@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Country\StoreRequest;
+use App\Http\Resources\UserResource;
 use App\Models\Country;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\User\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -45,16 +47,12 @@ class CountriesController extends BaseController
         DB::beginTransaction();
 
         try {
-            $countryUser = User::create([
-                'role_id' => Role::ALL['country'],
-                'name' => $request->get('name'),
-                'email' => $request->get('email'),
-                'password' => Hash::make(Str::random(8))
-            ]);
+            $request->merge(['role_id' => Role::ALL['country']]);
+            $countryUser = (new StoreService($request));
 
             $country = Country::create([
-                'name' => $request->get('name'),
-                'user_id' => $countryUser->id
+                'name' => $countryUser['name'],
+                'user_id' => $countryUser['id']
             ]);
 
             DB::commit();

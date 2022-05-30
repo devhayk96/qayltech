@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
@@ -40,14 +43,20 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'password' => 'string'
     ];
 
-    public function role()
+    public function role(): HasOne
     {
         return $this->hasOne(
             Role::class,
             'id',
             'role_id'
         );
+    }
+
+    public function setPasswordAttribute($value): string
+    {
+        return $this->attributes['password'] = Hash::make($value ?? Str::random(10));
     }
 }
