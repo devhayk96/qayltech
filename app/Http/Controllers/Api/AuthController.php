@@ -21,7 +21,7 @@ class AuthController extends BaseController
             return $this->sendResponse([], 'You are signed id');
         }
 
-        return $this->sendError('Need to authorize', 401);
+        return $this->sendError('Authentication required', 401);
     }
 
     /**

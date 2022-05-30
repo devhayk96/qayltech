@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Country\StoreRequest;
+use App\Http\Resources\UserResource;
 use App\Models\Country;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\User\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +27,7 @@ class CountriesController extends BaseController
      * @param Request $request
      * @return JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $countries = Country::query();
         if ($countryName = $request->get('name')) {
@@ -40,21 +42,17 @@ class CountriesController extends BaseController
      * @param StoreRequest $request
      * @return JsonResponse
      */
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request): JsonResponse
     {
         DB::beginTransaction();
 
         try {
-            $countryUser = User::create([
-                'role_id' => Role::ALL['country'],
-                'name' => $request->get('name'),
-                'email' => $request->get('email'),
-                'password' => Hash::make(Str::random(8))
-            ]);
+            $request->merge(['role_id' => Role::ALL['country']]);
+            $countryUser = (new StoreService($request));
 
             $country = Country::create([
-                'name' => $request->get('name'),
-                'user_id' => $countryUser->id
+                'name' => $countryUser['name'],
+                'user_id' => $countryUser['id']
             ]);
 
             DB::commit();
@@ -67,26 +65,18 @@ class CountriesController extends BaseController
 
 
     /**
-     * Display the specified resource.
+     * Return the specified country.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
-        //
-    }
+        if ($country = Country::find($id)) {
+            return $this->sendResponse($country, $country->name);
+        }
 
-
-    /**
-     * Show the form for editing the specified country.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return $this->sendError('Country not found');
     }
 
     /**
