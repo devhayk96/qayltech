@@ -14,10 +14,8 @@ class ListRequest extends FormRequest
     public function rules()
     {
         return [
-            'firstName' => 'required|string|max:255',
-            'lastName' => 'required|string|max:255',
-            'profession' => 'required|string|max:255',
             'hospitalId' => 'required|exists:hospitals,id',
+            'name' => 'nullable|string|max:90',
             'email' => 'required|unique:users',
         ];
     }
