@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\JsonResponse;
@@ -13,12 +13,24 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends BaseController
 {
     /**
+     * @return JsonResponse
+     */
+    public function index(): JsonResponse
+    {
+        if (current_user()) {
+            return $this->sendResponse([], 'You are signed id');
+        }
+
+        return $this->sendError('Need to authorize', 401);
+    }
+
+    /**
      * Register api
      *
      * @param Request $request
      * @return JsonResponse
      */
-    public function register(Request $request)
+    public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
@@ -46,7 +58,7 @@ class AuthController extends BaseController
      * @param LoginRequest $request
      * @return Response
      */
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): Response
     {
         if ($user = User::where('email', $request->get('email'))->first()) {
             if (Hash::check($request->get('password'), $user->password)) {
