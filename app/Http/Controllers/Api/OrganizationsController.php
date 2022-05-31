@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Organization\ListRequest;
 use App\Http\Requests\Organization\StoreRequest;
 use App\Models\Organization;
 use App\Models\Role;
@@ -23,7 +24,7 @@ class OrganizationsController extends BaseController
      *
      * @return JsonResponse
      */
-    public function index(Request $request): JsonResponse
+    public function index(ListRequest $request): JsonResponse
     {
         $country_id = $request->get('country_id');
         $organizations = Organization::query()->where('country_id', $country_id);
