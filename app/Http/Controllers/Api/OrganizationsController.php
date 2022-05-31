@@ -5,36 +5,34 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\Organization\StoreRequest;
 use App\Models\Organization;
 use App\Models\Role;
-use App\Models\User;
+use App\Services\User\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-
 
 class OrganizationsController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
+    public function __construct()
     {
-        $country_id = $request->country_id;
-        $organizations = Organization::all()->where('country_id', '=', $country_id);
-        return $organizations;
+        $this->middleware('hasAccess')->except('show');
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Return a listing of the organizations.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function create()
+    public function index(Request $request): JsonResponse
     {
-        //
+        $country_id = $request->get('country_id');
+        $organizations = Organization::query()->where('country_id', $country_id);
+
+        if ($organizationName = $request->get('name')) {
+            $organizations->where('name', 'LIKE', $organizationName .'%');
+        }
+
+        return $this->sendResponse($organizations->get(), 'Organizations List');
     }
 
     /**
@@ -55,8 +53,8 @@ class OrganizationsController extends BaseController
                 'name' => $request->get('name'),
                 'address' => $request->get('address'),
                 'category_id' => $request->get('categoryId'),
-                'country_id' => $request->get('categoryId'),
-                'user_id' => $organizationUser->id
+                'country_id' => $request->get('countryId'),
+                'user_id' => $organizationUser['id']
             ]);
 
             DB::commit();
@@ -70,23 +68,16 @@ class OrganizationsController extends BaseController
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
-        //
-    }
+        if ($organization = Organization::find($id)) {
+            return $this->sendResponse($organization, $organization->name);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return $this->sendError('Organization not found');
     }
 
     /**
@@ -94,7 +85,7 @@ class OrganizationsController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -105,7 +96,7 @@ class OrganizationsController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy($id)
     {
