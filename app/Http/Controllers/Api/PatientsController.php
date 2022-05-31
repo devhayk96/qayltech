@@ -19,15 +19,15 @@ class PatientsController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $doctor_id = $request->doctor_id;
-        $query = Patient::all()->where('doctor_id', '=', $doctor_id);
-        if ($request->is_individual){
-            $is_individual = $request->is_individual;
-            $query = $query->where('is_individual', '=', $is_individual);
+        $doctor_id = $request->get('doctor_id');
+        $patients = Patient::all()->where('doctor_id', '=', $doctor_id);
+        if ($is_individual = $request->get('is_individual')){
+            $patients->where('is_individual', '=', $is_individual);
         }
-        return $query;
+        return $this->sendResponse($patients->get(), 'Patients List');
+
     }
 
     /**
