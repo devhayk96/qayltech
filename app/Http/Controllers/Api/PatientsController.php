@@ -5,12 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\Patient\StoreRequest;
 use App\Models\Patient;
 use App\Models\Role;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class PatientsController extends BaseController
 {
@@ -28,16 +25,6 @@ class PatientsController extends BaseController
         }
         return $this->sendResponse($patients->get(), 'Patients List');
 
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -87,17 +74,6 @@ class PatientsController extends BaseController
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
     {
         //
     }

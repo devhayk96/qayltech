@@ -14,9 +14,11 @@ class ListRequest extends FormRequest
     public function rules()
     {
         return [
+            'countryId' => 'required|exists:countries,id',
             'hospitalId' => 'required|exists:hospitals,id',
             'name' => 'nullable|string|max:90',
-            'email' => 'required|unique:users',
+            'email' => 'nullable|string|email|max:90',
+            'profession' => 'nullable|string|max:90',
         ];
     }
 }

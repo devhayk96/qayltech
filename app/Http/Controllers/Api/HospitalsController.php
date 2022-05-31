@@ -5,19 +5,18 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\Hospital\StoreRequest;
 use App\Models\Hospital;
 use App\Models\Role;
-use App\Models\User;
+use App\Services\User\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class HospitalsController extends BaseController
 {
     /**
-     * Display a listing of the resource.
+     * Return a listing of the hospitals.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index(Request $request)
     {
@@ -28,16 +27,6 @@ class HospitalsController extends BaseController
             $query = $query->where('organization_id', '=', $organization_id);
         }
         return $query;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -75,20 +64,9 @@ class HospitalsController extends BaseController
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
     {
         //
     }
@@ -98,7 +76,7 @@ class HospitalsController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -109,7 +87,7 @@ class HospitalsController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy($id)
     {
