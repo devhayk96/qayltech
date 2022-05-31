@@ -6,13 +6,10 @@ use App\Http\Requests\Doctor\ListRequest;
 use App\Http\Requests\Doctor\StoreRequest;
 use App\Models\Doctor;
 use App\Models\Role;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class DoctorsController extends BaseController
 {
@@ -78,17 +75,6 @@ class DoctorsController extends BaseController
      * @return Response
      */
     public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
     {
         //
     }

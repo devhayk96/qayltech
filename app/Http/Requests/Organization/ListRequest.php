@@ -16,6 +16,7 @@ class ListRequest extends FormRequest
         return [
             'countryId' => 'required|exists:countries,id',
             'name' => 'nullable|string|max:90',
+            'email' => 'nullable|string|email|max:90',
         ];
     }
 }
