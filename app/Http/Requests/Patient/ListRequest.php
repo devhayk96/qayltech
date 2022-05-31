@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Doctor;
+namespace App\Http\Requests\Patient;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -14,8 +14,8 @@ class ListRequest extends FormRequest
     public function rules()
     {
         return [
-            'hospitalId' => 'required|exists:hospitals,id',
-            'name' => 'nullable|string|max:90',
+            'isIndividual' => 'nullable|boolean',
+            'doctorId' => 'required|exists:doctors,id',
             'email' => 'nullable|string|email|max:90',
         ];
     }

@@ -6,6 +6,7 @@ use App\Http\Requests\Doctor\ListRequest;
 use App\Http\Requests\Doctor\StoreRequest;
 use App\Models\Doctor;
 use App\Models\Role;
+use App\Services\User\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -69,14 +70,18 @@ class DoctorsController extends BaseController
     }
 
     /**
-     * Display the specified resource.
+     * Return the specified doctor.
      *
-     * @param  int  $id
-     * @return Response
+     * @param $id
+     * @return JsonResponse
      */
     public function show($id)
     {
-        //
+        if ($doctor = Doctor::find($id)) {
+            return $this->sendResponse($doctor, $doctor->first_name, $doctor->last_name);
+        }
+
+        return $this->sendError('Doctor not found');
     }
 
     /**
