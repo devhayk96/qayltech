@@ -56,28 +56,31 @@ class AuthController extends BaseController
      * Login api
      *
      * @param LoginRequest $request
-     * @return Response
+     * @return JsonResponse
      */
-    public function login(LoginRequest $request): Response
+    public function login(LoginRequest $request): JsonResponse
     {
         if ($user = User::where('email', $request->get('email'))->first()) {
             if (Hash::check($request->get('password'), $user->password)) {
                 $token = $user->createToken('Qayl Tech Login')->accessToken;
                 $response = ['token' => $token];
-                return response($response, 200);
+                return $this->sendResponse($response, 'You have successfully logged in');
             } else {
-                return response(["message" => "Password mismatch"], 422);
+                return $this->sendError("Password mismatch", 401);
             }
         }
 
-        return response(["message" => 'User does not exist'], 422);
+        return $this->sendResponse('User does not exist', 401);
     }
 
-    public function logout (Request $request)
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function logout(Request $request): JsonResponse
     {
         $token = $request->user()->token();
         $token->revoke();
-        $response = ['message' => 'You have been successfully logged out!'];
-        return response($response, 200);
+        return $this->sendResponse([], 'You have been successfully logged out!');
     }
 }
