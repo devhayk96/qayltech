@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Patient\StoreRequest;
+use App\Http\Requests\Patient\ListRequest;
 use App\Models\Patient;
+use App\Services\User\StoreService;
 use App\Models\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,7 +18,7 @@ class PatientsController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request): JsonResponse
+    public function index(ListRequest $request): JsonResponse
     {
         $doctor_id = $request->get('doctor_id');
         $patients = Patient::all()->where('doctor_id', '=', $doctor_id);
@@ -68,14 +70,18 @@ class PatientsController extends BaseController
     }
 
     /**
-     * Display the specified resource.
+     * Return the specified patient.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return JsonResponse
      */
     public function show($id)
     {
-        //
+        if ($patient = Patient::find($id)) {
+            return $this->sendResponse($patient, "$patient->first_name . $patient->last_name");
+        }
+
+        return $this->sendError('Patient not found');
     }
 
     /**

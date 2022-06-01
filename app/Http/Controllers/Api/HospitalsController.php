@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Hospital\StoreRequest;
+use App\Http\Requests\Hospital\ListRequest;
 use App\Models\Hospital;
 use App\Models\Role;
 use App\Services\User\StoreService;
@@ -18,15 +19,14 @@ class HospitalsController extends BaseController
      *
      * @return Response
      */
-    public function index(Request $request)
+    public function index(ListRequest $request)
     {
-        $country_id = $request->country_id;
-        $query = Hospital::all()->where('country_id', '=', $country_id);
-        if ($request->organization_id){
-            $organization_id = $request->organization_id;
-            $query = $query->where('organization_id', '=', $organization_id);
+        $country_id = $request->get('countryId');
+        $hospitals = Hospital::all()->where('country_id', $country_id);
+        if ($organizationId = $request->get('organizationId')){
+            $hospitals->where('organization_id', $organizationId);
         }
-        return $query;
+        return $this->sendResponse($hospitals->get(), 'Hospitals List');
     }
 
     /**
@@ -61,14 +61,18 @@ class HospitalsController extends BaseController
     }
 
     /**
-     * Display the specified resource.
+     * Return the specified hospital.
      *
-     * @param  int  $id
-     * @return Response
+     * @param $id
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
-        //
+        if ($hospital = Hospital::find($id)) {
+            return $this->sendResponse($hospital, $hospital->name);
+        }
+
+        return $this->sendError('Hospital not found');
     }
 
     /**
