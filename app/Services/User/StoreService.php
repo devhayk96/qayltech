@@ -15,6 +15,8 @@ class StoreService extends BaseCreateService
     {
         $password = generate_user_password();
         $request->merge(['password' => $password]);
+
+        /* need to get the password before hashing */
         request()->merge(['password' => $password]);
 
         parent::__construct($request);
