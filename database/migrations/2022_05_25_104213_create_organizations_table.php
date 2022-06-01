@@ -15,11 +15,11 @@ class CreateOrganizationsTable extends Migration
     {
         Schema::create('organizations', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users');
             $table->string('name');
             $table->string('address');
             $table->foreignId('category_id')->constrained('categories');
             $table->foreignId('country_id')->constrained('countries');
-            $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
     }
