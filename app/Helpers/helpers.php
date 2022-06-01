@@ -4,6 +4,7 @@ use App\Helpers\FileHelper;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 if (! function_exists('save_image')) {
     function save_image( $file, $maxWidth = 150, $path = null,$extension = null, $watermark_params = [], $filename = null)
@@ -85,5 +86,13 @@ if (! function_exists('is_super_admin')) {
     function is_super_admin()
     {
         return current_user_role() == Role::ALL['super_admin'];
+    }
+}
+
+
+if (! function_exists('generate_user_password')) {
+    function generate_user_password($length = 10)
+    {
+        return Str::random($length);
     }
 }

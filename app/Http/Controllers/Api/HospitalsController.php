@@ -17,14 +17,20 @@ class HospitalsController extends BaseController
     /**
      * Return a listing of the hospitals.
      *
-     * @return Response
+     * @param ListRequest $request
+     * @return JsonResponse
      */
-    public function index(ListRequest $request)
+    public function index(ListRequest $request): JsonResponse
     {
         $country_id = $request->get('countryId');
-        $hospitals = Hospital::all()->where('country_id', $country_id);
+        $hospitals = Hospital::query()
+            ->where('country_id', $country_id);
+
         if ($organizationId = $request->get('organizationId')){
             $hospitals->where('organization_id', $organizationId);
+        }
+        if ($hospitalName = $request->get('name')) {
+            $hospitals->where('name', 'LIKE', $hospitalName .'%');
         }
         return $this->sendResponse($hospitals->get(), 'Hospitals List');
     }
@@ -49,7 +55,7 @@ class HospitalsController extends BaseController
                 'category_id' => $request->get('categoryId'),
                 'organization_id' => $request->get('organizationId'),
                 'country_id' => $request->get('countryId'),
-                'user_id' => $hospitalUser->id
+                'user_id' => $hospitalUser['id']
             ]);
 
             DB::commit();

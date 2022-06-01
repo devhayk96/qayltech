@@ -2,15 +2,24 @@
 
 namespace App\Services\User;
 
-use App\Http\Resources\UserResource;
+use App\Http\Resources\UserStoreResource;
 use App\Models\User;
 use App\Services\BaseCreateService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Str;
 
 class StoreService extends BaseCreateService
 {
+    public function __construct(Request $request)
+    {
+        $password = generate_user_password();
+        $request->merge(['password' => $password]);
+        request()->merge(['password' => $password]);
+
+        parent::__construct($request);
+    }
+
     public function getModel() : Model
     {
         return new User();
@@ -18,14 +27,6 @@ class StoreService extends BaseCreateService
 
     public function getResourceData(): JsonResource
     {
-        return new UserResource($this->model);
-    }
-
-    public function getCreatedData() : array
-    {
-        $password = Str::random(10);
-        $this->data['password'] = $password;
-
-        return $this->data;
+        return new UserStoreResource($this->model);
     }
 }
