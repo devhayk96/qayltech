@@ -18,7 +18,7 @@ class StoreRequest extends FormRequest
             'lastName' => 'required|string|max:191',
             'profession' => 'required|string|max:191',
             'hospitalId' => 'required|exists:hospitals,id',
-            'email' => 'required|unique:users',
+            'email' => 'required|unique:users,email',
         ];
     }
 }

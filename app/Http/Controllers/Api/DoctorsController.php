@@ -58,7 +58,7 @@ class DoctorsController extends BaseController
                 'last_name' => $lastName,
                 'profession' => $request->get('profession'),
                 'hospital_id' => $request->get('hospitalId'),
-                'user_id' => $doctorUser->id
+                'user_id' => $doctorUser['id']
             ]);
 
             DB::commit();
