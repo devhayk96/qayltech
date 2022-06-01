@@ -78,7 +78,7 @@ class PatientsController extends BaseController
     public function show($id)
     {
         if ($patient = Patient::find($id)) {
-            return $this->sendResponse($patient, $patient->first_name, $patient->last_name);
+            return $this->sendResponse($patient, "$patient->first_name . $patient->last_name");
         }
 
         return $this->sendError('Patient not found');
