@@ -28,7 +28,8 @@ class DoctorsController extends BaseController
     public function index(ListRequest $request)
     {
         $doctors = Doctor::query()
-            ->where('hospital_id', $request->get('hospitalId'));
+            ->where('hospital_id', $request->get('hospitalId'))
+            ->where('country_id', $request->get('countryId'));
 
         if ($doctorName = $request->get('name')) {
             $doctors->where('name', 'LIKE', $doctorName .'%');
@@ -77,7 +78,7 @@ class DoctorsController extends BaseController
      */
     public function show($id): JsonResponse
     {
-        if ($doctor = Doctor::find($id)) {
+        if ($doctor = Doctor::with(['patients', 'hospital'])->find($id)) {
             return $this->sendResponse($doctor, "$doctor->first_name . $doctor->last_name");
         }
 

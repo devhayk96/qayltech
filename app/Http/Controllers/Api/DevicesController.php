@@ -53,7 +53,7 @@ class DevicesController extends BaseController
      * @param StoreRequest $request
      * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreRequest $request): JsonResponse
     {
         DB::beginTransaction();
 
@@ -74,14 +74,18 @@ class DevicesController extends BaseController
     }
 
     /**
-     * Display the specified resource.
+     * Return the specified device.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return JsonResponse
      */
     public function show($id)
     {
-        //
+        if ($device = Device::with('hospital')->find($id)) {
+            return $this->sendResponse($device, $device->code);
+        }
+
+        return $this->sendError('Doctor not found');
     }
 
     /**

@@ -11,7 +11,8 @@ class Device extends Model
     protected $fillable = [
         'code',
         'user_id',
-        'hospital_id'
+        'hospital_id',
+        'country_id'
     ];
 
     public function user()

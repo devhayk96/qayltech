@@ -74,7 +74,7 @@ class HospitalsController extends BaseController
      */
     public function show($id): JsonResponse
     {
-        if ($hospital = Hospital::find($id)) {
+        if ($hospital = Hospital::with('organization')->find($id)) {
             return $this->sendResponse($hospital, $hospital->name);
         }
 

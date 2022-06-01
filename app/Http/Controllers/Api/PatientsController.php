@@ -115,7 +115,8 @@ class PatientsController extends BaseController
      */
     public function show($id): JsonResponse
     {
-        if ($patient = Patient::find($id)) {
+        if ($patient = Patient::with('doctors')->find($id)) {
+            dd($patient);
             return $this->sendResponse($patient, "$patient->first_name . $patient->last_name");
         }
 
