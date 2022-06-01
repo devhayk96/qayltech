@@ -15,12 +15,12 @@ class CreateHospitalsTable extends Migration
     {
         Schema::create('hospitals', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users');
             $table->string('name');
             $table->string('address');
             $table->foreignId('category_id')->constrained('categories');
             $table->foreignId('country_id')->constrained('countries');
             $table->foreignId('organization_id')->nullable()->constrained('organizations');
-            $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
     }

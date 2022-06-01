@@ -22,12 +22,13 @@ class OrganizationsController extends BaseController
     /**
      * Return a listing of the organizations.
      *
+     * @param ListRequest $request
      * @return JsonResponse
      */
     public function index(ListRequest $request): JsonResponse
     {
-        $country_id = $request->get('country_id');
-        $organizations = Organization::query()->where('country_id', $country_id);
+        $organizations = Organization::query()
+            ->where('country_id', $request->get('countryId'));
 
         if ($organizationName = $request->get('name')) {
             $organizations->where('name', 'LIKE', $organizationName .'%');
