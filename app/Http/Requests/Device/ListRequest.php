@@ -17,7 +17,7 @@ class ListRequest extends FormRequest
             'countryId' => 'required|exists:countries,id',
             'organizationId' => 'nullable|exists:organizations,id',
             'hospitalId' => 'nullable|exists:hospitals,id',
-            'code' => 'required|string|unique:devices,code',
+            'code' => 'nullable|string',
         ];
     }
 }
