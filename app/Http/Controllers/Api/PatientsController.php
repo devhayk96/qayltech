@@ -9,6 +9,7 @@ use App\Services\User\StoreService;
 use App\Models\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 class PatientsController extends BaseController
@@ -16,14 +17,14 @@ class PatientsController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param ListRequest $request
+     * @return JsonResponse
      */
     public function index(ListRequest $request): JsonResponse
     {
-        $doctor_id = $request->get('doctor_id');
-        $patients = Patient::all()->where('doctor_id', '=', $doctor_id);
-        if ($is_individual = $request->get('is_individual')){
-            $patients->where('is_individual', '=', $is_individual);
+        $patients = Patient::query()->where('doctor_id', $request->get('doctor_id'));
+        if ($isIndividual = $request->get('isIndividual')){
+            $patients->where('is_individual', $isIndividual);
         }
         return $this->sendResponse($patients->get(), 'Patients List');
 
@@ -35,7 +36,7 @@ class PatientsController extends BaseController
      * @param StoreRequest $request
      * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         DB::beginTransaction();
 
@@ -75,7 +76,7 @@ class PatientsController extends BaseController
      * @param $id
      * @return JsonResponse
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
         if ($patient = Patient::find($id)) {
             return $this->sendResponse($patient, "$patient->first_name . $patient->last_name");
@@ -89,7 +90,7 @@ class PatientsController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -100,7 +101,7 @@ class PatientsController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy($id)
     {
