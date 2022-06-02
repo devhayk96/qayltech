@@ -68,7 +68,7 @@ class CountriesController extends BaseController
      */
     public function show($id): JsonResponse
     {
-        if ($country = Country::find($id)) {
+        if ($country = Country::with('organizations')->find($id)) {
             return $this->sendResponse($country, $country->name);
         }
 

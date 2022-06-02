@@ -14,10 +14,11 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'countryId' => 'required|exists:countries,id',
             'organizationId' => 'nullable|exists:organizations,id',
+            'countryId' => 'required|exists:countries,id',
             'hospitalId' => 'nullable|exists:hospitals,id',
             'code' => 'required|string|unique:devices,code',
         ];
+
     }
 }

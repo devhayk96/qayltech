@@ -32,7 +32,7 @@ class Patient extends Model
 
     public function doctors()
     {
-        return $this->hasMany(Doctor::class);
+        return $this->belongsToMany(Doctor::class, 'doctor_patient');
     }
 
     public function devices()
