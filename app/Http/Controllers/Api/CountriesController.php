@@ -14,7 +14,7 @@ class CountriesController extends BaseController
 {
     public function __construct()
     {
-        $this->middleware('hasAccess')->except('show');
+        $this->middleware('hasAccess:country,alllll')->except('show');
     }
 
     /**

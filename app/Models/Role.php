@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Models\Role as SpatieRole;
 
-class Role extends Model
+class Role extends SpatieRole
 {
     use HasFactory;
 
@@ -19,5 +19,10 @@ class Role extends Model
         'patient' => 6,
         'hospital_patient' => 7,
     ];
+
+    public function getPermissionIdsAttribute()
+    {
+        return $this->permissions()->pluck('id')->toArray();
+    }
 
 }
