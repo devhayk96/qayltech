@@ -18,5 +18,6 @@ QaylTech is a startup focused on producing lower-limb prosthetics for people wit
 - php artisan vendor:publish --tag=passport-config
 - php artisan vendor:publish --tag=passport-migrations
 - php artisan migrate --seed
+- php artisan init:permissions
 - php artisan passport:client --personal --no-interaction
 

@@ -14,11 +14,13 @@ class HasAccess
      * Handle an incoming request.
      *
      * @param Request $request
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
+     * @param Closure $next
+     * @param $resource
      * @return JsonResponse
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, $resource, $ttttttt)
     {
+        dd($resource,$ttttttt);
         if (!is_super_admin()) {
             return response()->json([
                 'success' => false,
