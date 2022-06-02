@@ -28,8 +28,7 @@ class DoctorsController extends BaseController
     public function index(ListRequest $request)
     {
         $doctors = Doctor::query()
-            ->where('hospital_id', $request->get('hospitalId'))
-            ->where('country_id', $request->get('countryId'));
+            ->where('hospital_id', $request->get('hospitalId'));
 
         if ($doctorName = $request->get('name')) {
             $doctors->where('name', 'LIKE', $doctorName .'%');
