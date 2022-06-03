@@ -14,12 +14,12 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
+            'name' => 'required|string|max:191',
+            'address' => 'required|string|max:191',
             'categoryId' => 'required|exists:categories,id',
-            'organizationId' => 'required|exists:organizations,id',
+            'organizationId' => 'nullable|exists:organizations,id',
             'countryId' => 'required|exists:countries,id',
-            'email' => 'required|unique:users',
+            'email' => 'required|unique:users,email',
         ];
     }
 }
