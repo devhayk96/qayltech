@@ -14,17 +14,21 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'firstName' => 'required|string|max:255',
-            'lastName' => 'required|string|max:255',
-            'birthDate' => 'required|date',
-            'disabilityDate' => 'date',
-            'disabilityReason' => 'text',
-            'disabilityCategory' => 'string',
-            'injury' => 'string|max:255',
-            'workoutBegin' => 'required|date',
-            'isIndividual' => 'required|boolean',
-            'image' => 'required|string|max:255',
-            'pdf' => 'required|string|max:255',
+            'countryId' => 'required|exists:countries,id',
+            'organization_id' => 'nullable|exists:organizations,id',
+            'hospital_id' => 'required_with:organization_id|exists:hospitals,id',
+            'doctor_id' => 'required_with:hospital_id|exists:doctors,id',
+            'firstName' => 'required|string|max:191',
+            'lastName' => 'required|string|max:191',
+            'email' => 'required|unique:users,email',
+            'birthDate' => ['required', 'date_format:Y-m-d', 'before_or_equal:'. date('Y-m-d', strtotime('-6 years'))],
+            'disabilityDate' => 'nullable|date',
+            'disabilityReason' => 'nullable|string',
+            'disabilityCategory' => 'nullable|string',
+            'injury' => 'nullable|string|max:191',
+            'workoutBegin' => 'nullable|date',
+            'image' => ['nullable', 'mimes:jpg,jpeg,png,bmp,tiff', 'max:4096'],
+            'pdf' => ['nullable', 'mimes:pdf', 'max:1024'],
         ];
     }
 }
