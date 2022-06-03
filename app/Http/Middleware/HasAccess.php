@@ -20,7 +20,6 @@ class HasAccess
      */
     public function handle(Request $request, Closure $next, $resource, $ttttttt)
     {
-        dd($resource,$ttttttt);
         if (!is_super_admin()) {
             return response()->json([
                 'success' => false,
