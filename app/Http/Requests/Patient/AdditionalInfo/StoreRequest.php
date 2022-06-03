@@ -16,8 +16,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'key' => 'required|string|max:255',
-            'value' => 'required|string|max:255',
-            'mobile_no' => 'unique:key,value,'.request('patient_id')
+            'value' => 'required|string|max:255'
         ];
     }
 }
