@@ -19,10 +19,11 @@ abstract class BasePermissions implements PermissionEnum
     public static function get(): array
     {
         return [
-            static::VIEW   => static::getLabel(static::VIEW),
-            static::CREATE => static::getLabel(static::CREATE),
-            static::UPDATE => static::getLabel(static::UPDATE),
-            static::DELETE => static::getLabel(static::DELETE),
+            static::VIEW          => static::getLabel(static::VIEW),
+            static::VIEW_PERSONAL => static::getLabel(static::VIEW_PERSONAL),
+            static::CREATE        => static::getLabel(static::CREATE),
+            static::UPDATE        => static::getLabel(static::UPDATE),
+            static::DELETE        => static::getLabel(static::DELETE),
         ];
     }
 

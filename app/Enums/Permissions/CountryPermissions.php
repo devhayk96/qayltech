@@ -7,6 +7,9 @@ class CountryPermissions extends BasePermissions
     // Right to view countries
     const VIEW = 'countries view';
 
+    // Right to view countries
+    const VIEW_PERSONAL = 'countries viewPersonal';
+
     // Right to create countries
     const CREATE = 'countries create';
 
