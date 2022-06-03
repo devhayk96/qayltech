@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class AuthController extends BaseController
+class AuthController extends Controller
 {
     /**
      * @return JsonResponse
@@ -83,4 +83,48 @@ class AuthController extends BaseController
         $token->revoke();
         return $this->sendResponse([], 'You have been successfully logged out!');
     }
+
+    /**
+     * success response method.
+     *
+     * @param $result
+     * @param $message
+     * @return JsonResponse
+     */
+    public function sendResponse($result, $message): JsonResponse
+    {
+        $response = [
+            'success' => true,
+            'message' => $message,
+        ];
+
+        if (!empty($result)) {
+            $response['data'] = $result;
+        }
+
+        return response()->json($response, 200);
+    }
+
+    /**
+     * return error response.
+     *
+     * @param $error
+     * @param array $errorMessages
+     * @param int $code
+     * @return JsonResponse
+     */
+    public function sendError($error, $code = 404, $errorMessages = []): JsonResponse
+    {
+        $response = [
+            'success' => false,
+            'message' => $error,
+        ];
+
+        if (!empty($errorMessages)) {
+            $response['data'] = $errorMessages;
+        }
+
+        return response()->json($response, $code);
+    }
+
 }

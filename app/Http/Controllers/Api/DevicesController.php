@@ -13,7 +13,12 @@ class DevicesController extends BaseController
 {
     public function __construct()
     {
-        $this->middleware('hasAccess')->except('show');
+//        $this->middleware('hasAccess')->except('show');
+    }
+
+    protected function resourceName() : string
+    {
+        return 'devices';
     }
 
     /**

@@ -43,7 +43,7 @@ class InitService
                             if (!Permission::where('name', $permission)->first()) {
                                 Permission::create([
                                     'name'       => $permission,
-                                    'guard_name' => 'admin',
+                                    'guard_name' => 'api',
                                     'group_name' => $group_name
                                 ]);
                             }

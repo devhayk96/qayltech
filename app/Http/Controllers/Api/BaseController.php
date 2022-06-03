@@ -5,8 +5,22 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 
-class BaseController extends Controller
+abstract class BaseController extends Controller
 {
+    protected $permissionKeyName;
+
+    public function __construct()
+    {
+        $this->permissionKeyName = $permissionKeyName = $this->resourceName();
+        $this->middleware(["permission:{$permissionKeyName} view"])->only('index');
+        $this->middleware(["permission:{$permissionKeyName} viewPersonal"])->only('show');
+        $this->middleware(["permission:{$permissionKeyName} create"])->only(['create', 'store']);
+        $this->middleware(["permission:{$permissionKeyName} update"])->only(['edit', 'update']);
+        $this->middleware(["permission:{$permissionKeyName} delete"])->only(['delete', 'destroy']);
+    }
+
+    abstract protected function resourceName(): string;
+
     /**
      * success response method.
      *
