@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\DB;
 
 class CategoriesController extends BaseController
 {
+    protected function resourceName() : string
+    {
+        return 'categories';
+    }
+
     /**
      * Display a listing of the resource.
      *

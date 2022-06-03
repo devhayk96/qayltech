@@ -7,6 +7,9 @@ class PatientPermissions extends BasePermissions
     // Right to view patients
     const VIEW = 'patients view';
 
+    // Right to view patients
+    const VIEW_PERSONAL = 'patients viewPersonal';
+
     // Right to create patients
     const CREATE = 'patients create';
 

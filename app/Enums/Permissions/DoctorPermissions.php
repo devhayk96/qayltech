@@ -7,6 +7,9 @@ class DoctorPermissions extends BasePermissions
     // Right to view doctors
     const VIEW = 'doctors view';
 
+    // Right to view doctors
+    const VIEW_PERSONAL = 'doctors viewPersonal';
+
     // Right to create doctors
     const CREATE = 'doctors create';
 

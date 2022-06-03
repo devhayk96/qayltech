@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\DB;
 
 class HospitalsController extends BaseController
 {
+    protected function resourceName() : string
+    {
+        return 'hospitals';
+    }
+
     /**
      * Return a listing of the hospitals.
      *
