@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class PatientAdditionalInfoTable extends Migration
+class PatientAdditionalInfosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class PatientAdditionalInfoTable extends Migration
      */
     public function up()
     {
-        Schema::create('patient_additional_info', function (Blueprint $table) {
+        Schema::create('patient_additional_infos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('patient_id')->constrained('patients');
             $table->string('key');
@@ -30,6 +30,6 @@ class PatientAdditionalInfoTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('patient_additional_info');
+        Schema::dropIfExists('patient_additional_infos');
     }
 }
