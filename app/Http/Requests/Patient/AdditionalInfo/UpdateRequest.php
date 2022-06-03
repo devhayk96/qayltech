@@ -14,7 +14,6 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'countryId' => 'required|exists:countries,id',
             'key' => 'required|string|max:255',
             'value' => 'required|string|max:255',
         ];
