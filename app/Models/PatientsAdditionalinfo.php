@@ -13,6 +13,6 @@ class PatientsAdditionalinfo extends Model
         'key',
         'value'
     ];
-    protected $table = 'patient_additional_info';
+    protected $table = 'patient_additional_infos';
 
 }
