@@ -151,7 +151,7 @@ class PatientsController extends BaseController
         //
     }
 
-    public function additionalInfoList(Patient $patient)
+    public function additionalInfos(Patient $patient)
     {
         return $this->sendResponse($patient->additionalInfos, 'Patients list');
     }
