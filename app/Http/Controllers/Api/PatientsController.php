@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\Patient\StoreRequest;
 use App\Http\Requests\Patient\ListRequest;
 use App\Models\Patient;
+use App\Http\Requests\Patient\AdditionalInfo\StoreRequest as AdditionalInfoStoreRequest;
 use App\Services\User\StoreService;
 use App\Models\Role;
 use Illuminate\Http\JsonResponse;
@@ -148,5 +149,20 @@ class PatientsController extends BaseController
     public function destroy($id)
     {
         //
+    }
+
+    public function additionalInfos(Patient $patient)
+    {
+        return $this->sendResponse($patient->additionalInfos, 'Patients list');
+    }
+
+    public function createAdditionalInfo(AdditionalInfoStoreRequest $request, Patient $patient)
+    {
+        $patient->additionalInfos()->create([
+            'key' => $request->get('key'),
+            'value' => $request->get('value'),
+        ]);
+
+        return $this->sendResponse($patient, 'Additional information successfully created');
     }
 }

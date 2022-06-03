@@ -37,6 +37,14 @@ Route::group(['middleware' => ['cors', 'json.response', 'auth:api']], function (
     Route::apiResource('organizations', OrganizationsController::class);
     Route::apiResource('patients', PatientsController::class);
 
+    Route::group(['prefix' => 'patients/{patient}'], function() {
+        Route::group(['prefix' => 'additional-infos'], function() {
+            Route::get('', [PatientsController::class, 'additionalInfos']);
+            Route::post('', [PatientsController::class, 'createAdditionalInfo']);
+            Route::put('{id}', [PatientsController::class, 'updateAdditionalInfo']);
+        });
+    });
+
     Route::post('logout', [AuthController::class, 'logout']);
 });
 

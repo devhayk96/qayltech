@@ -39,4 +39,11 @@ class Patient extends Model
     {
         return $this->hasMany(Device::class);
     }
+
+    public function additionalInfos()
+    {
+        return $this->hasMany(PatientsAdditionalinfo::class);
+    }
+
+
 }
