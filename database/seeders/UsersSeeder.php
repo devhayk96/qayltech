@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\Role;
+use App\Enums\StatusesEnum;
+use App\Models\Role as UserRole;
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 
-class UserSeeder extends Seeder
+class UsersSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,11 +16,15 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        User::create([
-            'role_id' => Role::ALL['super_admin'],
+        $superAdminRole = UserRole::find(UserRole::ALL['super_admin']);
+
+        $superAdmin = User::create([
             'name' => env('APP_NAME', 'QaylTech'),
-            'email' => env('SUPER_ADMIN_EMAIL', 'admin@gmail.com'),
-            'password' => env('SUPER_ADMIN_PASS', '123456'),
+            'email' => env('SUPER_ADMIN_EMAIL', 'It@qayl.tech'),
+            'password' => env('SUPER_ADMIN_PASS', 'MetaGait2022'),
+            'status' => StatusesEnum::STATUSES['active'],
         ]);
+
+        $superAdmin->assignRole($superAdminRole);
     }
 }

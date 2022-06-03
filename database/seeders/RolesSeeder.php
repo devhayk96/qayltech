@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role as UserRole;
 use Illuminate\Database\Seeder;
-use App\Models\Role;
+use Spatie\Permission\Models\Permission;
+
 class RolesSeeder extends Seeder
 {
     /**
@@ -13,13 +15,19 @@ class RolesSeeder extends Seeder
      */
     public function run()
     {
-        $roles = Role::ALL;
+        $superAdminRole = UserRole::ALL['super_admin'];
 
-        foreach ($roles as $role => $id){
-            Role::firstOrCreate([
-                'id' => $id ,
-                'name' => $role
+        foreach (UserRole::ALL as $role_name => $role_id) {
+            $role = UserRole::firstOrCreate([
+                'id' => $role_id,
+                'name' => $role_name,
+                'guard_name' => 'api'
             ]);
+
+            if ($role_id == $superAdminRole) {
+                $all_permissions = Permission::query()->where('guard_name', 'api')->pluck('id')->toArray();
+                $role->permissions()->attach($all_permissions);
+            }
         }
     }
 }
