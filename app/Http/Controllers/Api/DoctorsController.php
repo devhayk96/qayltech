@@ -78,7 +78,7 @@ class DoctorsController extends BaseController
     public function show($id): JsonResponse
     {
         if ($doctor = Doctor::with(['patients', 'hospital'])->find($id)) {
-            return $this->sendResponse($doctor, "$doctor->first_name . $doctor->last_name");
+            return $this->sendResponse($doctor, "$doctor->first_name $doctor->last_name");
         }
 
         return $this->sendError('Doctor not found');
