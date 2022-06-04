@@ -47,13 +47,9 @@ class User extends Authenticatable
         'password' => 'string'
     ];
 
-    public function role(): HasOne
+    public function role()
     {
-        return $this->hasOne(
-            Role::class,
-            'id',
-            'role_id'
-        );
+        return $this->roles()->first();
     }
 
     public function setPasswordAttribute($value): string
