@@ -27,6 +27,12 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        Gate::before(function () {
+            if (is_super_admin()) {
+                return true;
+            }
+        });
+
         Passport::routes();
 
         Passport::tokensExpireIn(Carbon::now()->addDays(15));
