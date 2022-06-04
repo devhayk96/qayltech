@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\DoctorsController;
 use App\Http\Controllers\Api\HospitalsController;
 use App\Http\Controllers\Api\OrganizationsController;
 use App\Http\Controllers\Api\PatientsController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -44,7 +45,7 @@ Route::group(['middleware' => ['cors', 'json.response', 'auth:api']], function (
             Route::put('{id}', [PatientsController::class, 'updateAdditionalInfo']);
         });
     });
-
+    Route::get('profile', [UserController::class, 'profile']);
     Route::post('logout', [AuthController::class, 'logout']);
 });
 

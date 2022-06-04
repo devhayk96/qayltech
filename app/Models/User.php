@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\Country;
+use App\Models\Hospital;
+use App\Models\Organization;
+use App\Models\Patient;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
@@ -57,8 +61,20 @@ class User extends Authenticatable
         return $this->attributes['password'] = Hash::make($value ?? Str::random(10));
     }
 
-    public function profile()
-    {
-        return current_user(current_user_role_name());
+    public function country(){
+        return $this->hasOne(Country::class);
     }
+
+    public function patient(){
+        return $this->hasOne(Patient::class);
+    }
+
+    public function organization(){
+        return $this->hasOne(Organization::class);
+    }
+
+    public function hospital(){
+        return $this->hasOne(Hospital::class);
+    }
+
 }
