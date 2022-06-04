@@ -66,18 +66,33 @@ if (!function_exists('image_exists')) {
 }
 
 if (! function_exists('current_user')) {
-    function current_user()
+    function current_user($relations = [])
     {
-        return auth('api')->check()
-            ? User::find(auth('api')->user()->id)->load(['role'])
-            : null;
+        if (auth('api')->check()) {
+            $user = User::query()
+                ->where('id', auth('api')->user()->id);
+
+            if (empty($relations)) {
+                $user->with($relations);
+            }
+            return $user->first();
+        }
+
+        return null;
     }
 }
 
 if (! function_exists('current_user_role')) {
     function current_user_role()
     {
-        return current_user() ? current_user()->role_id : null;
+        return current_user() ? current_user()->role->id : null;
+    }
+}
+
+if (! function_exists('current_user_role_name')) {
+    function current_user_role_name()
+    {
+        return current_user() ? current_user()->role->name : null;
     }
 }
 
