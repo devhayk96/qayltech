@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Patient\AdditionalInfo;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreRequest extends FormRequest
 {
@@ -12,11 +13,27 @@ class StoreRequest extends FormRequest
      *
      * @return array
      */
-    public function rules(StoreRequest $request)
+    public function rules()
     {
+        $key = request()->get('key');
+        $value = request()->get('value');
+        $patientId = request()->route('patient')->id;
+
         return [
             'key' => 'required|string|max:255',
-            'value' => 'required|string|max:255'
+            'value' => [
+                'required',
+                'string',
+                'max:191',
+                Rule::unique('patient_additional_infos')
+                    ->where(function ($query) use($key, $value, $patientId) {
+                        return $query->where([
+                            'key' => $key,
+                            'value' => $value,
+                            'patient_id' => $patientId
+                        ]);
+                    }),
+                ]
         ];
     }
 }

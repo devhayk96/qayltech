@@ -33,7 +33,7 @@ class PatientsController extends BaseController
             ->where('country_id', $request->get('countryId'));
 
         if ($doctorId = $request->get('doctorId')) {
-            $patients->whereHas('doctors', function ($query) use ($doctorId) {
+            $patients->whereHas('doctor', function ($query) use ($doctorId) {
                 $query->where('doctor_id', $doctorId);
             });
         }
@@ -122,7 +122,7 @@ class PatientsController extends BaseController
     public function show($id): JsonResponse
     {
         if ($patient = Patient::with('doctors')->find($id)) {
-            return $this->sendResponse($patient, "$patient->first_name . $patient->last_name");
+            return $this->sendResponse($patient, "$patient->first_name $patient->last_name");
         }
 
         return $this->sendError('Patient not found');
@@ -153,16 +153,16 @@ class PatientsController extends BaseController
 
     public function additionalInfos(Patient $patient)
     {
-        return $this->sendResponse($patient->additionalInfos, 'Patients list');
+        return $this->sendResponse($patient->additionalInfos, 'Patient additional infos list');
     }
 
     public function createAdditionalInfo(AdditionalInfoStoreRequest $request, Patient $patient)
     {
-        $patient->additionalInfos()->create([
+        $newInfo = $patient->additionalInfos()->create([
             'key' => $request->get('key'),
             'value' => $request->get('value'),
         ]);
 
-        return $this->sendResponse($patient, 'Additional information successfully created');
+        return $this->sendResponse($newInfo, 'Additional information successfully created');
     }
 }
