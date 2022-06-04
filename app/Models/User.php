@@ -56,4 +56,9 @@ class User extends Authenticatable
     {
         return $this->attributes['password'] = Hash::make($value ?? Str::random(10));
     }
+
+    public function profile()
+    {
+        return current_user(current_user_role_name());
+    }
 }
