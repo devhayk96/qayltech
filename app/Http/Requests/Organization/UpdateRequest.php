@@ -14,9 +14,9 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:191',
             'email' => 'required|unique:users',
-            'address' => 'required|string|max:255',
+            'address' => 'required|string|max:191',
             'categoryId' => 'required|exists:categories,id',
             'countryId' => 'required|exists:countries,id',
         ];

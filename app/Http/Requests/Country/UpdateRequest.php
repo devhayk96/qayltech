@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Country;
 
+use App\Rules\EmailRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRequest extends FormRequest

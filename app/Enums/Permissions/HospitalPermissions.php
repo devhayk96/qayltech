@@ -7,6 +7,9 @@ class HospitalPermissions extends BasePermissions
     // Right to view hospitals
     const VIEW = 'hospitals view';
 
+    // Right to view hospitals
+    const VIEW_PERSONAL = 'hospitals viewPersonal';
+
     // Right to create hospitals
     const CREATE = 'hospitals create';
 

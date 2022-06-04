@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\DB;
 
 class DevicesController extends BaseController
 {
-    public function __construct()
+    protected function resourceName() : string
     {
-        $this->middleware('hasAccess')->except('show');
+        return 'devices';
     }
 
     /**

@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\DB;
 
 class OrganizationsController extends BaseController
 {
-    public function __construct()
+    protected function resourceName() : string
     {
-        $this->middleware('hasAccess')->except('show');
+        return 'organizations';
     }
 
     /**

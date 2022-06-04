@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\DB;
 
 class CountriesController extends BaseController
 {
-    public function __construct()
+    protected function resourceName() : string
     {
-        $this->middleware('hasAccess:country,alllll')->except('show');
+        return 'countries';
     }
 
     /**

@@ -17,7 +17,6 @@ class UserStoreResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'role' => $this->role->name,
             'name' => $this->name,
             'email' => $this->email,
             'password' => request()->get('password'),

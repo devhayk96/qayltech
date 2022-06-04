@@ -7,6 +7,9 @@ class OrganizationPermissions extends BasePermissions
     // Right to view organizations
     const VIEW = 'organizations view';
 
+    // Right to view organizations
+    const VIEW_PERSONAL = 'organizations viewPersonal';
+
     // Right to create organizations
     const CREATE = 'organizations create';
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Category\StoreRequest;
+use App\Http\Requests\Category\ListRequest;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -10,14 +11,22 @@ use Illuminate\Support\Facades\DB;
 
 class CategoriesController extends BaseController
 {
+    protected function resourceName() : string
+    {
+        return 'categories';
+    }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param ListRequest $request
+     * @return JsonResponse
      */
-    public function index()
+    public function index(ListRequest $request)
     {
+        $categories = Category::query()->where('type', $request->get('type'));
 
+        return $this->sendResponse($categories->get(), 'List of categories');
     }
 
     /**

@@ -15,6 +15,11 @@ use Illuminate\Support\Str;
 
 class PatientsController extends BaseController
 {
+    protected function resourceName() : string
+    {
+        return 'patients';
+    }
+
     /**
      * Display a listing of the resource.
      *

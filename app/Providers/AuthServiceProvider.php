@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Policies\CountryPolicy;
+use App\Policies\DoctorPolicy;
+use App\Policies\HospitalPolicy;
+use App\Policies\OrganizationPolicy;
+use App\Policies\PatientPolicy;
 use Carbon\Carbon;
 use Laravel\Passport\Passport;
 use Illuminate\Support\Facades\Gate;
@@ -15,7 +20,12 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-         'App\Models\Model' => 'App\Policies\ModelPolicy',
+//         'App\Models\Model' => 'App\Policies\ModelPolicy',
+        'App\Models\CountryPolicy' => CountryPolicy::class,
+        'App\Models\OrganizationPolicy' => OrganizationPolicy::class,
+        'App\Models\HospitalPolicy' => HospitalPolicy::class,
+        'App\Models\DoctorPolicy' => DoctorPolicy::class,
+        'App\Models\PatientPolicy' => PatientPolicy::class,
     ];
 
     /**
