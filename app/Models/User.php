@@ -61,19 +61,23 @@ class User extends Authenticatable
         return $this->attributes['password'] = Hash::make($value ?? Str::random(10));
     }
 
-    public function country(){
+    public function country()
+    {
         return $this->hasOne(Country::class);
     }
 
-    public function patient(){
+    public function patient()
+    {
         return $this->hasOne(Patient::class);
     }
 
-    public function organization(){
+    public function organization()
+    {
         return $this->hasOne(Organization::class);
     }
 
-    public function hospital(){
+    public function hospital()
+    {
         return $this->hasOne(Hospital::class);
     }
 
