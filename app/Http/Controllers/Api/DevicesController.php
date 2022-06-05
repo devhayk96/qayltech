@@ -24,7 +24,7 @@ class DevicesController extends BaseController
      */
     public function index(ListRequest $request)
     {
-        $devices = Device::query()->where('countryId', $request->get('countryId'));
+        $devices = Device::query()->where('country_id', $request->get('countryId'));
 
         if ($organizationId = $request->get('organizationId')) {
             $devices->where('hospital_id', $organizationId);
@@ -75,7 +75,7 @@ class DevicesController extends BaseController
             return $this->sendResponse($device, $device->code);
         }
 
-        return $this->sendError('Doctor not found');
+        return $this->sendError('Device not found');
     }
 
     /**
