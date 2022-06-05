@@ -12,6 +12,7 @@ class Device extends Model
         'code',
         'user_id',
         'hospital_id',
+        'organization_id',
         'country_id'
     ];
 
