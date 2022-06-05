@@ -48,6 +48,10 @@ class RolesSeeder extends Seeder
             4 => DoctorPermissions::VIEW,
         ];
 
+        $doctorPermissionsArr = [
+            1 => PatientPermissions::VIEW,
+        ];
+
 
         foreach (UserRole::ALL as $role_name => $role_id) {
             $role = UserRole::firstOrCreate([
@@ -76,6 +80,11 @@ class RolesSeeder extends Seeder
             else if ($role_id == $hospitalRole) {
                 $permissions = Permission::query()->where('guard_name', 'api')
                     ->whereIn('name', $hospitalPermissionsArr)->pluck('id')->toArray();
+                $role->permissions()->attach($permissions);
+            }
+            else if ($role_id == $doctorRole) {
+                $permissions = Permission::query()->where('guard_name', 'api')
+                    ->whereIn('name', $doctorPermissionsArr)->pluck('id')->toArray();
                 $role->permissions()->attach($permissions);
             }
         }

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\Patient\StoreRequest;
 use App\Http\Requests\Patient\ListRequest;
 use App\Models\Device;
+use App\Models\Doctor;
+use App\Models\Hospital;
 use App\Models\Patient;
 use App\Http\Requests\Patient\AdditionalInfo\StoreRequest as AdditionalInfoStoreRequest;
 use App\Services\User\StoreService;
@@ -30,9 +32,12 @@ class PatientsController extends BaseController
      */
     public function index(ListRequest $request): JsonResponse
     {
-        $patients = Patient::query()
-            ->where('country_id', $request->get('countryId'));
+        $authUser = auth()->user();
+        $doctor = Doctor::with('hospital')->where('user_id', $authUser->id)->select('hospital_id')->first();
 
+        $patients = Patient::query()
+            ->where('country_id', $request->get('countryId'))
+            ->where('hospital_id', $doctor->hospital_id);
         if ($doctorId = $request->get('doctorId')) {
             $patients->whereHas('doctor', function ($query) use ($doctorId) {
                 $query->where('doctor_id', $doctorId);
