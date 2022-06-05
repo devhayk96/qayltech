@@ -85,14 +85,14 @@ if (! function_exists('current_user')) {
 if (! function_exists('current_user_role')) {
     function current_user_role()
     {
-        return current_user() ? current_user()->role->id : null;
+        return current_user() ? current_user()->roles()->pluck('id')->first() : null;
     }
 }
 
 if (! function_exists('current_user_role_name')) {
     function current_user_role_name()
     {
-        return current_user() ? current_user()->role->name : null;
+        return current_user() ? current_user()->roles()->pluck('name')->first() : null;
     }
 }
 

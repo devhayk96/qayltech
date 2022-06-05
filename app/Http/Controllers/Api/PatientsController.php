@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Patient\StoreRequest;
 use App\Http\Requests\Patient\ListRequest;
+use App\Models\Device;
 use App\Models\Patient;
 use App\Http\Requests\Patient\AdditionalInfo\StoreRequest as AdditionalInfoStoreRequest;
 use App\Services\User\StoreService;
@@ -66,13 +67,9 @@ class PatientsController extends BaseController
             $isIndividual = true;
             $imagePath = $pdfPath = null;
 
-            if ($doctorId = $request->get('doctorId')) {
+            $doctorId = $request->get('doctorId');
+            if ($doctorId || current_user_role() == Role::ALL['doctor']) {
                 $isIndividual = false;
-
-            }
-
-            if ($deviceId = $request->get('deviceId')) {
-
             }
 
             if ($pdf = $request->file('pdf')) {
@@ -92,6 +89,8 @@ class PatientsController extends BaseController
             $patient = Patient::create([
                 'user_id' => $patientUser['id'],
                 'country_id' => $request->get('countryId'),
+                'organization_id' => $request->get('organizationId'),
+                'hospital_id' => $request->get('hospitalId'),
                 'first_name' => $request->get('firstName'),
                 'last_name' => $request->get('lastName'),
                 'birth_date' => $request->get('birthDate'),
@@ -104,6 +103,13 @@ class PatientsController extends BaseController
                 'image' => $imagePath,
                 'pdf' => $pdfPath,
             ]);
+
+            if ($doctorId && ($deviceId = $request->get('deviceId'))) {
+                $patient->doctors()->sync([
+                    'doctor_id' => $doctorId,
+                    'device_id' => $deviceId
+                ]);
+            }
 
             DB::commit();
             return $this->sendResponse($patientUser, 'Patient successfully created');
@@ -164,5 +170,48 @@ class PatientsController extends BaseController
         ]);
 
         return $this->sendResponse($newInfo, 'Additional information successfully created');
+    }
+
+    public function generateList(GenerateListRequest $request)
+    {
+        if ($file = $request->file('json_file')) {
+            $contents = file_get_contents($file);
+        } elseif ($request->has('json_data')) {
+            $contents = $request->get('json_data');
+        } else {
+            return response()->json(['success' => false], 422);
+        }
+
+        $list = json_decode($contents, true);
+        if ($this->validateJson($list)) {
+            $background = $request->has('background_url')
+                ? "background-url: url(" . $request->get('background_url') . ")"
+                : ($request->has('background_color') ? "background-color: " . $request->get('background_color') . ")" : "");
+            return response()->json([
+                'success' => true,
+                'html' => view('lists.partials.items', compact('list', 'background'))->render()
+            ]);
+        }
+
+        return response()->json(['success' => false], 422);
+    }
+
+    private function validateJson($json_data)
+    {
+        $validated = true;
+        if (array_key_exists('items', $json_data)) {
+            foreach ($json_data['items'] as $item) {
+                if (array_key_exists('title', $item) && array_key_exists('type', $item)) {
+                    if ($item['type'] == 'array') {
+                        $this->validateJson($item['items']);
+                    }
+                } else {
+                    $validated = false;
+                }
+            }
+        } else {
+            $validated = false;
+        }
+        return $validated;
     }
 }

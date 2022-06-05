@@ -38,16 +38,6 @@ class DevicesController extends BaseController
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created device in database.
      *
      * @param StoreRequest $request
@@ -86,17 +76,6 @@ class DevicesController extends BaseController
         }
 
         return $this->sendError('Doctor not found');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
