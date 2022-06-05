@@ -6,6 +6,11 @@ use App\Models\Role as UserRole;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use App\Enums\Permissions\CountryPermissions;
+use App\Enums\Permissions\OrganizationPermissions;
+use App\Enums\Permissions\DoctorPermissions;
+use App\Enums\Permissions\HospitalPermissions;
+use App\Enums\Permissions\PatientPermissions;
+use App\Enums\Permissions\CategoryPermissions;
 
 class RolesSeeder extends Seeder
 {
@@ -24,9 +29,26 @@ class RolesSeeder extends Seeder
         $patientRole = UserRole::ALL['patient'];
 
         $countryPermissionsArr = [
-            1 => CountryPermissions::VIEW,
-            2 => CountryPermissions::CREATE,
+            1 => OrganizationPermissions::VIEW,
+            2 => HospitalPermissions::VIEW,
+            3 => DoctorPermissions::VIEW,
+            4 => PatientPermissions::VIEW,
         ];
+
+        $organizationPermissionsArr = [
+            1 => HospitalPermissions::VIEW,
+            2 => PatientPermissions::VIEW,
+            3 => DoctorPermissions::VIEW,
+        ];
+
+        $hospitalPermissionsArr = [
+            1 => DoctorPermissions::CREATE,
+            2 => PatientPermissions::CREATE,
+            3 => PatientPermissions::VIEW,
+            4 => DoctorPermissions::VIEW,
+        ];
+
+
         foreach (UserRole::ALL as $role_name => $role_id) {
             $role = UserRole::firstOrCreate([
                 'id' => $role_id,
@@ -42,6 +64,18 @@ class RolesSeeder extends Seeder
             else if ($role_id == $countryRole) {
                 $permissions = Permission::query()->where('guard_name', 'api')
                     ->whereIn('name', $countryPermissionsArr)->pluck('id')->toArray();
+                $role->permissions()->attach($permissions);
+            }
+
+            else if ($role_id == $organizationRole) {
+                $permissions = Permission::query()->where('guard_name', 'api')
+                    ->whereIn('name', $organizationPermissionsArr)->pluck('id')->toArray();
+                $role->permissions()->attach($permissions);
+            }
+
+            else if ($role_id == $hospitalRole) {
+                $permissions = Permission::query()->where('guard_name', 'api')
+                    ->whereIn('name', $hospitalPermissionsArr)->pluck('id')->toArray();
                 $role->permissions()->attach($permissions);
             }
         }
