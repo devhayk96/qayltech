@@ -88,14 +88,18 @@ class CountriesController extends BaseController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified country from database.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return JsonResponse
      */
     public function destroy($id)
     {
-        //
+        if (Country::query()->where('id', $id)->delete()) {
+            return $this->sendResponse([], 'Country deleted successfully');
+        }
+
+        return $this->sendError('Country not found');
     }
 
 }
