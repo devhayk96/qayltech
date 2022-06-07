@@ -16,7 +16,8 @@ class AssignPatientRequest extends FormRequest
     {
         return [
             'patientId' => 'required|exists:countries,id',
-            'doctorId' => 'nullable|exists:doctors,id',
+            'doctorId' => 'required|exists:doctors,id',
+            'deviceId' => 'required|exists:devices,id',
             'additionalInfos' => 'array',
         ];
     }

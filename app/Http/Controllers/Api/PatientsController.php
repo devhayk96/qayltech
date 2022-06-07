@@ -2,32 +2,36 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Requests\Patient\StoreRequest;
-use App\Http\Requests\Patient\ListRequest;
-use App\Models\Device;
+use App\Models\Role;
 use App\Models\Doctor;
-use App\Models\Hospital;
 use App\Models\Patient;
+use App\Services\User\StoreService;
+use App\Models\PatientsAdditionalinfo;
+use App\Http\Requests\Patient\ListRequest;
+use App\Http\Requests\Patient\StoreRequest;
 use App\Http\Requests\Patient\AdditionalInfo\StoreRequest as AdditionalInfoStoreRequest;
 use App\Http\Requests\Patient\AssignPatientRequest;
-use App\Models\PatientsAdditionalinfo;
-use App\Services\User\StoreService;
-use App\Models\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class PatientsController extends BaseController
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->middleware(["permission:{$this->permissionKeyName} assign,api"])->only(['assignPatient']);
+    }
+
     protected function resourceName() : string
     {
         return 'patients';
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the patients.
      *
      * @param ListRequest $request
      * @return JsonResponse
@@ -164,11 +168,22 @@ class PatientsController extends BaseController
         //
     }
 
+    /**
+     * Display a listing of the patient additional infos.
+     *
+     * @param Patient $patient
+     * @return JsonResponse
+     */
     public function additionalInfos(Patient $patient)
     {
         return $this->sendResponse($patient->additionalInfos, 'Patient additional infos list');
     }
 
+    /**
+     * @param AdditionalInfoStoreRequest $request
+     * @param Patient $patient
+     * @return JsonResponse
+     */
     public function createAdditionalInfo(AdditionalInfoStoreRequest $request, Patient $patient)
     {
         $newInfo = $patient->additionalInfos()->create([
@@ -179,24 +194,32 @@ class PatientsController extends BaseController
         return $this->sendResponse($newInfo, 'Additional information successfully created');
     }
 
+    /**
+     * Assign patient to doctor
+     *
+     * @param AssignPatientRequest $request
+     * @return JsonResponse
+     */
     public function assignPatient(AssignPatientRequest $request)
     {
         $doctor = Doctor::find($request->get('doctorId'));
-        $doctor->patients()->attach($request->get('patientId'));
+        $doctor->patients()->attach([
+            'patient_id' => $request->get('patientId'),
+            'device_id'  => $request->get('deviceId'),
+        ]);
 
-        if ($request->additionalInfos){
-            foreach ($request->additionalInfos as $additionalInfo){
+        $additionalInfos = $request->get('additionalInfos');
+
+        if ($additionalInfos && !empty($additionalInfos)) {
+            foreach ($additionalInfos as $additionalInfo){
                 PatientsAdditionalinfo::create([
                     'patient_id' => $request->get('patientId'),
                     'key' => $additionalInfo['key'],
                     'value' => $additionalInfo['value']
                 ]);
             }
-
-
         }
+
         return $this->sendResponse($doctor, 'Patient successfully assigned');
-
-
     }
 }
