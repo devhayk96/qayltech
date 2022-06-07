@@ -104,6 +104,10 @@ class DoctorsController extends BaseController
      */
     public function destroy($id)
     {
-        //
+        if (Doctor::query()->where('id', $id)->delete()) {
+            return $this->sendResponse([], 'Doctor deleted successfully');
+        }
+
+        return $this->sendError('Doctor not found');
     }
 }

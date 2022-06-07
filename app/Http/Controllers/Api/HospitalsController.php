@@ -106,6 +106,10 @@ class HospitalsController extends BaseController
      */
     public function destroy($id)
     {
-        //
+        if (Hospital::query()->where('id', $id)->delete()) {
+            return $this->sendResponse([], 'Hospital deleted successfully');
+        }
+
+        return $this->sendError('Hospital not found');
     }
 }

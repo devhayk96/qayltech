@@ -102,6 +102,10 @@ class OrganizationsController extends BaseController
      */
     public function destroy($id)
     {
-        //
+        if (Organization::query()->where('id', $id)->delete()) {
+            return $this->sendResponse([], 'Organization deleted successfully');
+        }
+
+        return $this->sendError('Organization not found');
     }
 }

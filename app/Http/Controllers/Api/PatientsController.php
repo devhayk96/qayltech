@@ -165,7 +165,11 @@ class PatientsController extends BaseController
      */
     public function destroy($id)
     {
-        //
+        if (Patient::query()->where('id', $id)->delete()) {
+            return $this->sendResponse([], 'Patient deleted successfully');
+        }
+
+        return $this->sendError('Patient not found');
     }
 
     /**
