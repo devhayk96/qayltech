@@ -59,34 +59,28 @@ class RolesSeeder extends Seeder
                 'name' => $role_name,
                 'guard_name' => 'api'
             ]);
+            $permissions = [];
 
             if ($role_id == $superAdminRole) {
-                $all_permissions = Permission::query()->where('guard_name', 'api')->pluck('id')->toArray();
-                $role->permissions()->attach($all_permissions);
+                $permissions = Permission::query()->where('guard_name', 'api')->pluck('id')->toArray();
             }
-
             else if ($role_id == $countryRole) {
                 $permissions = Permission::query()->where('guard_name', 'api')
                     ->whereIn('name', $countryPermissionsArr)->pluck('id')->toArray();
-                $role->permissions()->attach($permissions);
             }
-
             else if ($role_id == $organizationRole) {
                 $permissions = Permission::query()->where('guard_name', 'api')
                     ->whereIn('name', $organizationPermissionsArr)->pluck('id')->toArray();
-                $role->permissions()->attach($permissions);
             }
-
             else if ($role_id == $hospitalRole) {
                 $permissions = Permission::query()->where('guard_name', 'api')
                     ->whereIn('name', $hospitalPermissionsArr)->pluck('id')->toArray();
-                $role->permissions()->attach($permissions);
             }
             else if ($role_id == $doctorRole) {
                 $permissions = Permission::query()->where('guard_name', 'api')
                     ->whereIn('name', $doctorPermissionsArr)->pluck('id')->toArray();
-                $role->permissions()->attach($permissions);
             }
+            $role->permissions()->attach($permissions);
         }
     }
 }
