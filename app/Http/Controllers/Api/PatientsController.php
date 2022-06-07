@@ -9,7 +9,7 @@ use App\Models\Doctor;
 use App\Models\Hospital;
 use App\Models\Patient;
 use App\Http\Requests\Patient\AdditionalInfo\StoreRequest as AdditionalInfoStoreRequest;
-use App\Http\Requests\Patient\AssignedPatientRequest;
+use App\Http\Requests\Patient\AssignPatientRequest;
 use App\Models\PatientsAdditionalinfo;
 use App\Services\User\StoreService;
 use App\Models\Role;
@@ -222,20 +222,23 @@ class PatientsController extends BaseController
         return $validated;
     }
 
-    public function assignedPatient(AssignedPatientRequest $request)
+    public function assignedPatient(AssignPatientRequest $request)
     {
-        $assignedPatient = Doctor::find($request->get('doctor_id'));
-        $assignedPatient->patients()->attach($request->get('patient_id'));
+        $assignPatient = Doctor::find($request->get('doctorId'));
+        $assignPatient->patients()->attach($request->get('patientId'));
 
         if ($request->additionalInfos){
-           PatientsAdditionalinfo::query()->create([
-               'patient_id' => $request->get('patient_id'),
-               'key' => $request->additionalInfos['key'],
-               'value' => $request->additionalInfos['value']
-           ]);
+            foreach ($request->additionalInfos as $key => $value){
+                PatientsAdditionalinfo::query()->create([
+                    'patient_id' => $request->get('patientId'),
+                    'key' => $value['key'],
+                    'value' => $value['value']
+                ]);
+            }
+
 
         }
-        return $this->sendResponse($assignedPatient,'Patient successfully assigned');
+        return $this->sendResponse($assignPatient,'Patient successfully assigned');
 
 
     }

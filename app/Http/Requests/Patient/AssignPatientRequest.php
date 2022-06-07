@@ -5,7 +5,7 @@ namespace App\Http\Requests\Patient;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 
-class AssignedPatientRequest extends FormRequest
+class AssignPatientRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -15,8 +15,8 @@ class AssignedPatientRequest extends FormRequest
     public function rules()
     {
         return [
-            'patient_id' => 'required|exists:countries,id',
-            'doctor_id' => 'nullable|exists:doctors,id',
+            'patientId' => 'required|exists:countries,id',
+            'doctorId' => 'nullable|exists:doctors,id',
             'additionalInfos' => 'array',
             'additionalInfos.key' => 'max:191',
             'additionalInfos.value' => 'max:191',
