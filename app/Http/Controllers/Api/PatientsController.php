@@ -179,66 +179,23 @@ class PatientsController extends BaseController
         return $this->sendResponse($newInfo, 'Additional information successfully created');
     }
 
-    public function generateList(GenerateListRequest $request)
+    public function assignPatient(AssignPatientRequest $request)
     {
-        if ($file = $request->file('json_file')) {
-            $contents = file_get_contents($file);
-        } elseif ($request->has('json_data')) {
-            $contents = $request->get('json_data');
-        } else {
-            return response()->json(['success' => false], 422);
-        }
-
-        $list = json_decode($contents, true);
-        if ($this->validateJson($list)) {
-            $background = $request->has('background_url')
-                ? "background-url: url(" . $request->get('background_url') . ")"
-                : ($request->has('background_color') ? "background-color: " . $request->get('background_color') . ")" : "");
-            return response()->json([
-                'success' => true,
-                'html' => view('lists.partials.items', compact('list', 'background'))->render()
-            ]);
-        }
-
-        return response()->json(['success' => false], 422);
-    }
-
-    private function validateJson($json_data)
-    {
-        $validated = true;
-        if (array_key_exists('items', $json_data)) {
-            foreach ($json_data['items'] as $item) {
-                if (array_key_exists('title', $item) && array_key_exists('type', $item)) {
-                    if ($item['type'] == 'array') {
-                        $this->validateJson($item['items']);
-                    }
-                } else {
-                    $validated = false;
-                }
-            }
-        } else {
-            $validated = false;
-        }
-        return $validated;
-    }
-
-    public function assignedPatient(AssignPatientRequest $request)
-    {
-        $assignPatient = Doctor::find($request->get('doctorId'));
-        $assignPatient->patients()->attach($request->get('patientId'));
+        $doctor = Doctor::find($request->get('doctorId'));
+        $doctor->patients()->attach($request->get('patientId'));
 
         if ($request->additionalInfos){
-            foreach ($request->additionalInfos as $key => $value){
-                PatientsAdditionalinfo::query()->create([
+            foreach ($request->additionalInfos as $additionalInfo){
+                PatientsAdditionalinfo::create([
                     'patient_id' => $request->get('patientId'),
-                    'key' => $value['key'],
-                    'value' => $value['value']
+                    'key' => $additionalInfo['key'],
+                    'value' => $additionalInfo['value']
                 ]);
             }
 
 
         }
-        return $this->sendResponse($assignPatient,'Patient successfully assigned');
+        return $this->sendResponse($doctor, 'Patient successfully assigned');
 
 
     }
