@@ -18,8 +18,6 @@ class AssignPatientRequest extends FormRequest
             'patientId' => 'required|exists:countries,id',
             'doctorId' => 'nullable|exists:doctors,id',
             'additionalInfos' => 'array',
-            'additionalInfos.key' => 'max:191',
-            'additionalInfos.value' => 'max:191',
         ];
     }
 }
