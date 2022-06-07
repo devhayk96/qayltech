@@ -46,6 +46,7 @@ Route::group(['middleware' => ['cors', 'json.response', 'auth:api']], function (
         });
     });
     Route::get('profile', [UserController::class, 'profile']);
+    Route::get('assigned-patient', [PatientsController::class, 'assignedPatient']);
     Route::post('logout', [AuthController::class, 'logout']);
 });
 

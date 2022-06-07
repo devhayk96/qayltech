@@ -15,10 +15,10 @@ class CreateDoctorPatientTable extends Migration
     {
         Schema::create('doctor_patient', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('doctor_id')->nullable()->constrained('doctors');
+            $table->foreignId('doctor_id')->constrained('doctors');
             $table->foreignId('patient_id')->constrained('patients');
-            $table->foreignId('device_id')->constrained('devices');
-            $table->timestamp('workout_start');
+            $table->foreignId('device_id')->nullable()->constrained('devices');
+            $table->timestamp('workout_start')->nullable();
             $table->timestamp('workout_end')->nullable();
             $table->timestamps();
         });

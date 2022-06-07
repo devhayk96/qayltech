@@ -9,6 +9,8 @@ use App\Models\Doctor;
 use App\Models\Hospital;
 use App\Models\Patient;
 use App\Http\Requests\Patient\AdditionalInfo\StoreRequest as AdditionalInfoStoreRequest;
+use App\Http\Requests\Patient\AssignedPatientRequest;
+use App\Models\PatientsAdditionalinfo;
 use App\Services\User\StoreService;
 use App\Models\Role;
 use Illuminate\Http\JsonResponse;
@@ -218,5 +220,23 @@ class PatientsController extends BaseController
             $validated = false;
         }
         return $validated;
+    }
+
+    public function assignedPatient(AssignedPatientRequest $request)
+    {
+        $assignedPatient = Doctor::find($request->get('doctor_id'));
+        $assignedPatient->patients()->attach($request->get('patient_id'));
+
+        if ($request->additionalInfos){
+           PatientsAdditionalinfo::query()->create([
+               'patient_id' => $request->get('patient_id'),
+               'key' => $request->additionalInfos['key'],
+               'value' => $request->additionalInfos['value']
+           ]);
+
+        }
+        return $this->sendResponse($assignedPatient,'Patient successfully assigned');
+
+
     }
 }
