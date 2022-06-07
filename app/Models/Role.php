@@ -9,7 +9,6 @@ class Role extends SpatieRole
 {
     use HasFactory;
 
-
     const ALL = [
         'super_admin' => 1,
         'country' => 2,
