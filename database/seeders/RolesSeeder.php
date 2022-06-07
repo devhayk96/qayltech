@@ -28,17 +28,20 @@ class RolesSeeder extends Seeder
             ],
             'organization' => [
                 HospitalPermissions::VIEW,
-                PatientPermissions::VIEW,
                 DoctorPermissions::VIEW,
+                PatientPermissions::VIEW,
             ],
             'hospital' => [
-                DoctorPermissions::CREATE,
-                PatientPermissions::CREATE,
-                PatientPermissions::VIEW,
                 DoctorPermissions::VIEW,
+                DoctorPermissions::CREATE,
+                PatientPermissions::VIEW,
+                PatientPermissions::CREATE,
+                PatientPermissions::ASSIGN,
+                PatientPermissions::DELETE,
             ],
             'doctor' => [
                 PatientPermissions::VIEW,
+                PatientPermissions::ASSIGN,
             ],
             'patient' => [
                 PatientPermissions::VIEW_PERSONAL,
