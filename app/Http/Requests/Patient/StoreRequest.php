@@ -16,8 +16,8 @@ class StoreRequest extends FormRequest
         return [
             'countryId' => 'required|exists:countries,id',
             'organizationId' => 'nullable|exists:organizations,id',
-            'hospitalId' => 'required_with:organization_id|exists:hospitals,id',
-            'doctorId' => 'required_with:hospital_id|exists:doctors,id',
+            'hospitalId' => 'required_with:organizationId|exists:hospitals,id',
+            'doctorId' => 'required_with:hospitalId|exists:doctors,id',
             'deviceId' => 'nullable|exists:devices,id',
             'firstName' => 'required|string|max:191',
             'lastName' => 'required|string|max:191',
