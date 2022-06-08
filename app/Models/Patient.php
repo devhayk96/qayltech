@@ -18,6 +18,7 @@ class Patient extends Model
         'disability_date',
         'disability_reason',
         'disability_category',
+        'organization_id',
         'injury',
         'workout_begin',
         'is_individual',

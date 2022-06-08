@@ -13,6 +13,8 @@ class Doctor extends Model
         'last_name',
         'profession',
         'hospital_id',
+        'country_id',
+        'organization_id',
         'user_id',
     ];
 

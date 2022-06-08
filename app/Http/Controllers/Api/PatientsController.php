@@ -43,7 +43,7 @@ class PatientsController extends BaseController
             ->where('country_id', $request->get('countryId'));
 
         if ($doctorId = $request->get('doctorId') || (current_user_role() == Role::ALL['doctor'])) {
-            $patients->whereHas('doctor', function ($query) use ($doctorId) {
+            $patients->whereHas('doctors', function ($query) use ($doctorId) {
                 $query->where('doctor_id', $doctorId);
             });
         }
@@ -51,7 +51,7 @@ class PatientsController extends BaseController
             $patients->where('organization_id', $organizationId);
         }
         if ($hospitalId = $request->get('hospitalId')) {
-            $patients->where('organization_id', $hospitalId);
+            $patients->where('hospital_id', $hospitalId);
         }
         if ($isIndividual = $request->get('isIndividual')) {
             $patients->where('is_individual', $isIndividual);
