@@ -111,4 +111,14 @@ class CategoriesController extends BaseController
 
         return $this->sendError('Category not found');
     }
+
+    public function delete($id)
+    {
+
+    }
+
+    public function restore($id)
+    {
+
+    }
 }

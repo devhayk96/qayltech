@@ -104,4 +104,14 @@ class DevicesController extends BaseController
 
         return $this->sendError('Device not found');
     }
+
+    public function delete($id)
+    {
+
+    }
+
+    public function restore($id)
+    {
+
+    }
 }

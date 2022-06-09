@@ -229,4 +229,14 @@ class PatientsController extends BaseController
 
         return $this->sendResponse($doctor, 'Patient successfully assigned');
     }
+
+    public function delete($id)
+    {
+
+    }
+
+    public function restore($id)
+    {
+
+    }
 }

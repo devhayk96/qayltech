@@ -112,4 +112,14 @@ class HospitalsController extends BaseController
 
         return $this->sendError('Hospital not found');
     }
+
+    public function delete($id)
+    {
+
+    }
+
+    public function restore($id)
+    {
+
+    }
 }
