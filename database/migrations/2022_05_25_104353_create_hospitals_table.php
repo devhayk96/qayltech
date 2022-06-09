@@ -18,7 +18,7 @@ class CreateHospitalsTable extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->string('name');
             $table->string('address');
-            $table->foreignId('category_id')->constrained('categories')->nullOnDelete();
+            $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
             $table->foreignId('country_id')->constrained('countries');
             $table->foreignId('organization_id')->nullable()->constrained('organizations')->nullOnDelete();
             $table->timestamps();
