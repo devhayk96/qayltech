@@ -24,33 +24,33 @@ class AuthController extends Controller
         return $this->sendError('Authentication required', 401);
     }
 
-    /**
-     * Register api
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function register(Request $request): JsonResponse
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-            'c_password' => 'required|same:password',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors());
-        }
-
-        $input = $request->all();
-        $input['password'] = bcrypt($input['password']);
-        $user = User::create($input);
-        $success['token'] = $user->createToken('MyApp')->accessToken;
-        $success['name'] = $user->name;
-
-        return $this->sendResponse($success, 'User register successfully.');
-    }
+//    /**
+//     * Register api
+//     *
+//     * @param Request $request
+//     * @return JsonResponse
+//     */
+//    public function register(Request $request): JsonResponse
+//    {
+//        $validator = Validator::make($request->all(), [
+//            'name' => 'required',
+//            'email' => 'required|email',
+//            'password' => 'required',
+//            'c_password' => 'required|same:password',
+//        ]);
+//
+//        if ($validator->fails()) {
+//            return $this->sendError('Validation Error.', $validator->errors());
+//        }
+//
+//        $input = $request->all();
+//        $input['password'] = bcrypt($input['password']);
+//        $user = User::create($input);
+//        $success['token'] = $user->createToken('MyApp')->accessToken;
+//        $success['name'] = $user->name;
+//
+//        return $this->sendResponse($success, 'User register successfully.');
+//    }
 
     /**
      * Login api
@@ -70,7 +70,7 @@ class AuthController extends Controller
             }
         }
 
-        return $this->sendResponse('User does not exist', 401);
+        return $this->sendError('User does not exist', 401);
     }
 
     /**
