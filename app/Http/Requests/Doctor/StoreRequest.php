@@ -18,6 +18,8 @@ class StoreRequest extends FormRequest
             'lastName' => 'required|string|max:191',
             'profession' => 'required|string|max:191',
             'hospitalId' => 'required|exists:hospitals,id',
+            'countryId' => 'required|exists:countries,id',
+            'organizationId' => 'required|exists:organizations,id',
             'email' => 'required|unique:users,email',
         ];
     }

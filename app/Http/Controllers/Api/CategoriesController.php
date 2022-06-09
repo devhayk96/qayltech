@@ -105,6 +105,10 @@ class CategoriesController extends BaseController
      */
     public function destroy($id)
     {
-        //
+        if (Category::query()->where('id', $id)->delete()) {
+            return $this->sendResponse([], 'Category deleted successfully');
+        }
+
+        return $this->sendError('Category not found');
     }
 }

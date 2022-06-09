@@ -98,6 +98,10 @@ class DevicesController extends BaseController
      */
     public function destroy($id)
     {
-        //
+        if (Device::query()->where('id', $id)->delete()) {
+            return $this->sendResponse([], 'Device deleted successfully');
+        }
+
+        return $this->sendError('Device not found');
     }
 }

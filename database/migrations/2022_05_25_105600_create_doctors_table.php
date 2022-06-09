@@ -20,6 +20,8 @@ class CreateDoctorsTable extends Migration
             $table->string('last_name');
             $table->string('profession');
             $table->foreignId('hospital_id')->constrained('hospitals')->nullOnDelete();
+            $table->foreignId('country_id')->constrained('countries');
+            $table->foreignId('organization_id')->constrained('organizations');
             $table->timestamps();
         });
     }

@@ -28,11 +28,19 @@ class DoctorsController extends BaseController
     public function index(ListRequest $request)
     {
         $doctors = Doctor::query()
-            ->where('hospital_id', $request->get('hospitalId'));
+            ->where('country_id', $request->get('countryId'));
 
         if ($doctorName = $request->get('name')) {
-            $doctors->where('name', 'LIKE', $doctorName .'%');
+            $doctors->where('first_name', 'LIKE', $doctorName .'%');
         }
+
+        if ($organizationId = $request->get('organizationId')) {
+            $doctors->where('organization_id', $organizationId);
+        }
+        if ($hospitalId = $request->get('hospitalId')) {
+            $doctors->where('hospital_id', $hospitalId);
+        }
+
         return $this->sendResponse($doctors->get(), 'List of doctors');
     }
 
@@ -56,10 +64,13 @@ class DoctorsController extends BaseController
             $doctor = Doctor::create([
                 'first_name' => $firstName,
                 'last_name' => $lastName,
+                'country_id' => $request->get('countryId'),
                 'profession' => $request->get('profession'),
                 'hospital_id' => $request->get('hospitalId'),
+                'organization_id' => $request->get('organizationId'),
                 'user_id' => $doctorUser['id']
             ]);
+
 
             DB::commit();
             return $this->sendResponse($doctorUser, 'Doctor successfully created');
@@ -104,6 +115,10 @@ class DoctorsController extends BaseController
      */
     public function destroy($id)
     {
-        //
+        if (Doctor::query()->where('id', $id)->delete()) {
+            return $this->sendResponse([], 'Doctor deleted successfully');
+        }
+
+        return $this->sendError('Doctor not found');
     }
 }

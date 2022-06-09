@@ -38,18 +38,21 @@ class PatientsController extends BaseController
      */
     public function index(ListRequest $request): JsonResponse
     {
-        $authUser = auth()->user();
-        $doctor = Doctor::with('hospital')->where('user_id', $authUser->id)->select('hospital_id')->first();
 
         $patients = Patient::query()
-            ->where('country_id', $request->get('countryId'))
-            ->where('hospital_id', $doctor->hospital_id);
-        if ($doctorId = $request->get('doctorId')) {
-            $patients->whereHas('doctor', function ($query) use ($doctorId) {
+            ->where('country_id', $request->get('countryId'));
+
+        if ($doctorId = $request->get('doctorId') || (current_user_role() == Role::ALL['doctor'])) {
+            $patients->whereHas('doctors', function ($query) use ($doctorId) {
                 $query->where('doctor_id', $doctorId);
             });
         }
-
+        if ($organizationId = $request->get('organizationId')) {
+            $patients->where('organization_id', $organizationId);
+        }
+        if ($hospitalId = $request->get('hospitalId')) {
+            $patients->where('hospital_id', $hospitalId);
+        }
         if ($isIndividual = $request->get('isIndividual')) {
             $patients->where('is_individual', $isIndividual);
         }
@@ -165,7 +168,11 @@ class PatientsController extends BaseController
      */
     public function destroy($id)
     {
-        //
+        if (Patient::query()->where('id', $id)->delete()) {
+            return $this->sendResponse([], 'Patient deleted successfully');
+        }
+
+        return $this->sendError('Patient not found');
     }
 
     /**
