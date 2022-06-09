@@ -1,6 +1,7 @@
 /node_modules
 /public/hot
 /public/storage
+/public/freelance-gyumri
 /storage/*.key
 /vendor
 .env
