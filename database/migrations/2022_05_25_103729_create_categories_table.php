@@ -19,6 +19,7 @@ class CreateCategoriesTable extends Migration
             $table->string('type');
             $table->unique(['name', 'type']);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -29,6 +30,9 @@ class CreateCategoriesTable extends Migration
      */
     public function down()
     {
+        Schema::table('categories', function($table) {
+            $table->dropSoftDeletes();
+        });
         Schema::dropIfExists('categories');
     }
 }

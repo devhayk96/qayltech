@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->string('status')->default(StatusesEnum::STATUSES['not_verified']);
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -33,6 +34,10 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
+        Schema::table('users', function($table) {
+            $table->dropSoftDeletes();
+        });
         Schema::dropIfExists('users');
+
     }
 }

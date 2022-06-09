@@ -169,7 +169,7 @@ class PatientsController extends BaseController
     public function destroy($id)
     {
         if (Patient::query()->where('id', $id)->delete()) {
-            return $this->sendResponse([], 'Patient deleted successfully');
+            return $this->sendResponse([], 'Patient archived successfully');
         }
 
         return $this->sendError('Patient not found');
@@ -232,11 +232,19 @@ class PatientsController extends BaseController
 
     public function delete($id)
     {
+        if (Patient::query()->where('id', $id)->forceDelete()) {
+            return $this->sendResponse([], 'Patient deleted successfully');
+        }
 
+        return $this->sendError('Patient not found');
     }
 
     public function restore($id)
     {
+        if (Patient::query()->where('id', $id)->restore()) {
+            return $this->sendResponse([], 'Patient restored successfully');
+        }
 
+        return $this->sendError('Patient not found');
     }
 }

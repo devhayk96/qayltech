@@ -106,7 +106,7 @@ class CategoriesController extends BaseController
     public function destroy($id)
     {
         if (Category::query()->where('id', $id)->delete()) {
-            return $this->sendResponse([], 'Category deleted successfully');
+            return $this->sendResponse([], 'Category archived successfully');
         }
 
         return $this->sendError('Category not found');
@@ -114,11 +114,19 @@ class CategoriesController extends BaseController
 
     public function delete($id)
     {
+        if (Category::query()->where('id', $id)->forceDelete()) {
+            return $this->sendResponse([], 'Category deleted successfully');
+        }
 
+        return $this->sendError('Category not found');
     }
 
     public function restore($id)
     {
+        if (Category::query()->where('id', $id)->restore()) {
+            return $this->sendResponse([], 'Category restored successfully');
+        }
 
+        return $this->sendError('Category not found');
     }
 }

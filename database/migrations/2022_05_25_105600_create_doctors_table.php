@@ -23,6 +23,7 @@ class CreateDoctorsTable extends Migration
             $table->foreignId('organization_id')->nullable()->constrained('organizations')->nullOnDelete();
             $table->foreignId('hospital_id')->nullable()->constrained('hospitals')->nullOnDelete();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -33,6 +34,9 @@ class CreateDoctorsTable extends Migration
      */
     public function down()
     {
+        Schema::table('doctors', function($table) {
+            $table->dropSoftDeletes();
+        });
         Schema::dropIfExists('doctors');
     }
 }

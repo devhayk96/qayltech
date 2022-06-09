@@ -20,6 +20,7 @@ class CreateDevicesTable extends Migration
             $table->foreignId('organization_id')->nullable()->constrained('organizations');
             $table->foreignId('hospital_id')->nullable()->constrained('hospitals');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -30,6 +31,9 @@ class CreateDevicesTable extends Migration
      */
     public function down()
     {
+        Schema::table('devices', function($table) {
+            $table->dropSoftDeletes();
+        });
         Schema::dropIfExists('devices');
     }
 }

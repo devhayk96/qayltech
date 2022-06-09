@@ -107,7 +107,7 @@ class HospitalsController extends BaseController
     public function destroy($id)
     {
         if (Hospital::query()->where('id', $id)->delete()) {
-            return $this->sendResponse([], 'Hospital deleted successfully');
+            return $this->sendResponse([], 'Hospital archived successfully');
         }
 
         return $this->sendError('Hospital not found');
@@ -115,11 +115,19 @@ class HospitalsController extends BaseController
 
     public function delete($id)
     {
+        if (Hospital::query()->where('id', $id)->forceDelete()) {
+            return $this->sendResponse([], 'Hospital deleted successfully');
+        }
 
+        return $this->sendError('Hospital not found');
     }
 
     public function restore($id)
     {
+        if (Hospital::query()->where('id', $id)->restore()) {
+            return $this->sendResponse([], 'Hospital restored successfully');
+        }
 
+        return $this->sendError('Hospital not found');
     }
 }

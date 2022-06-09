@@ -96,7 +96,7 @@ class CountriesController extends BaseController
     public function destroy($id)
     {
         if (Country::query()->where('id', $id)->delete()) {
-            return $this->sendResponse([], 'Country deleted successfully');
+            return $this->sendResponse([], 'Country archived successfully');
         }
 
         return $this->sendError('Country not found');
@@ -104,12 +104,20 @@ class CountriesController extends BaseController
 
     public function delete($id)
     {
+        if (Country::query()->where('id', $id)->forceDelete()) {
+            return $this->sendResponse([], 'Country deleted successfully');
+        }
 
+        return $this->sendError('Country not found');
     }
 
     public function restore($id)
     {
+        if (Country::query()->where('id', $id)->restore()) {
+            return $this->sendResponse([], 'Country restored successfully');
+        }
 
+        return $this->sendError('Country not found');
     }
 
 }
