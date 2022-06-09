@@ -31,12 +31,33 @@ Route::group(['middleware' => ['cors', 'json.response', 'auth:api']], function (
     });
 
     Route::apiResource('categories', CategoriesController::class);
+    Route::post('categories-delete/{id}', [CategoriesController::class, 'delete']);
+    Route::post('categories-destroy/{id}', [CategoriesController::class, 'destroy']);
+    Route::post('categories-restore/{id}', [CategoriesController::class, 'restore']);
     Route::apiResource('countries', CountriesController::class);
+    Route::post('countries-delete/{id}', [CountriesController::class, 'delete']);
+    Route::post('countries-destroy/{id}', [CountriesController::class, 'destroy']);
+    Route::post('countries-restore/{id}', [CountriesController::class, 'restore']);
     Route::apiResource('devices', DevicesController::class);
+    Route::post('devices-delete/{id}', [DevicesController::class, 'delete']);
+    Route::post('devices-destroy/{id}', [DevicesController::class, 'destroy']);
+    Route::post('devices-restore/{id}', [DevicesController::class, 'restore']);
     Route::apiResource('doctors', DoctorsController::class);
+    Route::post('doctors-delete/{id}', [DoctorsController::class, 'delete']);
+    Route::post('doctors-destroy/{id}', [DoctorsController::class, 'destroy']);
+    Route::post('doctors-restore/{id}', [DoctorsController::class, 'restore']);
     Route::apiResource('hospitals', HospitalsController::class);
+    Route::post('hospitals-delete/{id}', [HospitalsController::class, 'delete']);
+    Route::post('hospitals-destroy/{id}', [HospitalsController::class, 'destroy']);
+    Route::post('hospitals-restore/{id}', [HospitalsController::class, 'restore']);
     Route::apiResource('organizations', OrganizationsController::class);
+    Route::post('organizations-delete/{id}', [OrganizationsController::class, 'delete']);
+    Route::post('organizations-destroy/{id}', [OrganizationsController::class, 'destroy']);
+    Route::post('organizations-restore/{id}', [OrganizationsController::class, 'restore']);
     Route::apiResource('patients', PatientsController::class);
+    Route::post('patients-delete/{id}', [PatientsController::class, 'delete']);
+    Route::post('patients-destroy/{id}', [PatientsController::class, 'destroy']);
+    Route::post('patients-restore/{id}', [PatientsController::class, 'restore']);
 
     Route::group(['prefix' => 'patients/{patient}'], function() {
         Route::group(['prefix' => 'additional-infos'], function() {

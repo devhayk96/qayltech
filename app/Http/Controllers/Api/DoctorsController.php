@@ -121,4 +121,14 @@ class DoctorsController extends BaseController
 
         return $this->sendError('Doctor not found');
     }
+
+    public function delete($id)
+    {
+
+    }
+
+    public function restore($id)
+    {
+
+    }
 }

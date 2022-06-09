@@ -102,4 +102,14 @@ class CountriesController extends BaseController
         return $this->sendError('Country not found');
     }
 
+    public function delete($id)
+    {
+
+    }
+
+    public function restore($id)
+    {
+
+    }
+
 }

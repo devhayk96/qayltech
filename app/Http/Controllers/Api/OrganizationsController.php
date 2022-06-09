@@ -108,4 +108,14 @@ class OrganizationsController extends BaseController
 
         return $this->sendError('Organization not found');
     }
+
+    public function delete($id)
+    {
+
+    }
+
+    public function restore($id)
+    {
+
+    }
 }
