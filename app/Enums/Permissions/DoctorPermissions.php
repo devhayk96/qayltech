@@ -19,4 +19,10 @@ class DoctorPermissions extends BasePermissions
     // Right to delete doctors
     const DELETE = 'doctors delete';
 
+    // Right to destroy doctors
+    const DESTROY = 'doctors destroy';
+
+    // Right to restore doctors
+    const RESTORE = 'doctors restore';
+
 }

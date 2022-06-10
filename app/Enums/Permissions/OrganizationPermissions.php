@@ -19,4 +19,10 @@ class OrganizationPermissions extends BasePermissions
     // Right to delete organizations
     const DELETE = 'organizations delete';
 
+    // Right to destroy organizations
+    const DESTROY = 'organizations destroy';
+
+    // Right to restore organizations
+    const RESTORE = 'organizations restore';
+
 }
