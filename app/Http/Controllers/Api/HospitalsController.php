@@ -99,12 +99,12 @@ class HospitalsController extends BaseController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Archive the specified hospital in database.
      *
      * @param  int  $id
-     * @return Response
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         if (Hospital::query()->where('id', $id)->delete()) {
             return $this->sendResponse([], 'Hospital archived successfully');
@@ -113,7 +113,12 @@ class HospitalsController extends BaseController
         return $this->sendError('Hospital not found');
     }
 
-    public function delete($id)
+    /**
+     * Permanently delete the specified hospital from database
+     * @param $id
+     * @return JsonResponse
+     */
+    public function delete($id): JsonResponse
     {
         if (Hospital::query()->where('id', $id)->forceDelete()) {
             return $this->sendResponse([], 'Hospital deleted successfully');
@@ -122,7 +127,12 @@ class HospitalsController extends BaseController
         return $this->sendError('Hospital not found');
     }
 
-    public function restore($id)
+    /**
+     * Restore the specified hospital in database
+     * @param $id
+     * @return JsonResponse
+     */
+    public function restore($id): JsonResponse
     {
         if (Hospital::query()->where('id', $id)->restore()) {
             return $this->sendResponse([], 'Hospital restored successfully');
