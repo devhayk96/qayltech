@@ -19,4 +19,10 @@ class CategoryPermissions extends BasePermissions
     // Right to delete categories
     const DELETE = 'categories delete';
 
+    // Right to destroy categories
+    const DESTROY = 'categories destroy';
+
+    // Right to restore categories
+    const RESTORE = 'categories restore';
+
 }

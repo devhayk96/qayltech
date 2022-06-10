@@ -22,6 +22,12 @@ class PatientPermissions extends BasePermissions
     // Right to assign patients
     const ASSIGN = 'patients assign';
 
+    // Right to destroy patients
+    const DESTROY = 'patients destroy';
+
+    // Right to restore patients
+    const RESTORE = 'patients restore';
+
     public static function get(): array
     {
         return [

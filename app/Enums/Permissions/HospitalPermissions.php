@@ -19,4 +19,10 @@ class HospitalPermissions extends BasePermissions
     // Right to delete hospitals
     const DELETE = 'hospitals delete';
 
+    // Right to destroy hospitals
+    const DESTROY = 'hospitals destroy';
+
+    // Right to restore hospitals
+    const RESTORE = 'hospitals restore';
+
 }

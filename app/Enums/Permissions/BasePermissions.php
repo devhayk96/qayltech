@@ -24,6 +24,8 @@ abstract class BasePermissions implements PermissionEnum
             static::CREATE        => static::getLabel(static::CREATE),
             static::UPDATE        => static::getLabel(static::UPDATE),
             static::DELETE        => static::getLabel(static::DELETE),
+            static::DESTROY       => static::getLabel(static::DESTROY),
+            static::RESTORE       => static::getLabel(static::RESTORE),
         ];
     }
 

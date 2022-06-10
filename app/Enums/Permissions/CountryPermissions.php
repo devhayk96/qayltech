@@ -19,4 +19,10 @@ class CountryPermissions extends BasePermissions
     // Right to delete countries
     const DELETE = 'countries delete';
 
+    // Right to destroy countries
+    const DESTROY = 'countries destroy';
+
+    // Right to restore countries
+    const RESTORE = 'countries restore';
+
 }
