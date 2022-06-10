@@ -21,6 +21,7 @@ class CreateOrganizationsTable extends Migration
             $table->foreignId('category_id')->constrained('categories');
             $table->foreignId('country_id')->constrained('countries');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -31,6 +32,9 @@ class CreateOrganizationsTable extends Migration
      */
     public function down()
     {
+        Schema::table('organizations', function($table) {
+            $table->dropSoftDeletes();
+        });
         Schema::dropIfExists('organizations');
     }
 }

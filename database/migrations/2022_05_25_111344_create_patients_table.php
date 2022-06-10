@@ -31,6 +31,7 @@ class CreatePatientsTable extends Migration
             $table->string('image')->nullable();
             $table->string('pdf')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -41,6 +42,9 @@ class CreatePatientsTable extends Migration
      */
     public function down()
     {
+        Schema::table('patients', function($table) {
+            $table->dropSoftDeletes();
+        });
         Schema::dropIfExists('patients');
     }
 }

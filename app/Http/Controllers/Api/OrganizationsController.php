@@ -103,7 +103,7 @@ class OrganizationsController extends BaseController
     public function destroy($id)
     {
         if (Organization::query()->where('id', $id)->delete()) {
-            return $this->sendResponse([], 'Organization deleted successfully');
+            return $this->sendResponse([], 'Organization archived successfully');
         }
 
         return $this->sendError('Organization not found');
@@ -111,11 +111,19 @@ class OrganizationsController extends BaseController
 
     public function delete($id)
     {
+        if (Organization::query()->where('id', $id)->forceDelete()) {
+            return $this->sendResponse([], 'Organization deleted successfully');
+        }
 
+        return $this->sendError('Organization not found');
     }
 
     public function restore($id)
     {
+        if (Organization::query()->where('id', $id)->restore()) {
+            return $this->sendResponse([], 'Organization restored successfully');
+        }
 
+        return $this->sendError('Organization not found');
     }
 }

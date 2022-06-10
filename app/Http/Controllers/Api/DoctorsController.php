@@ -116,7 +116,7 @@ class DoctorsController extends BaseController
     public function destroy($id)
     {
         if (Doctor::query()->where('id', $id)->delete()) {
-            return $this->sendResponse([], 'Doctor deleted successfully');
+            return $this->sendResponse([], 'Doctor archived successfully');
         }
 
         return $this->sendError('Doctor not found');
@@ -124,11 +124,19 @@ class DoctorsController extends BaseController
 
     public function delete($id)
     {
+        if (Doctor::query()->where('id', $id)->forceDelete()) {
+            return $this->sendResponse([], 'Doctor deleted successfully');
+        }
 
+        return $this->sendError('Doctor not found');
     }
 
     public function restore($id)
     {
+        if (Doctor::query()->where('id', $id)->restore()) {
+            return $this->sendResponse([], 'Doctor restored successfully');
+        }
 
+        return $this->sendError('Doctor not found');
     }
 }
