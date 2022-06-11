@@ -16,7 +16,9 @@ abstract class BaseController extends Controller
         $this->middleware(["permission:{$this->permissionKeyName} viewPersonal,api"])->only('show');
         $this->middleware(["permission:{$this->permissionKeyName} create,api"])->only(['store']);
         $this->middleware(["permission:{$this->permissionKeyName} update,api"])->only(['update']);
-        $this->middleware(["permission:{$this->permissionKeyName} delete,api"])->only(['destroy']);
+        $this->middleware(["permission:{$this->permissionKeyName} delete,api"])->only(['delete']);
+        $this->middleware(["permission:{$this->permissionKeyName} destroy,api"])->only(['destroy']);
+        $this->middleware(["permission:{$this->permissionKeyName} restore,api"])->only(['restore']);
     }
 
     abstract protected function resourceName(): string;

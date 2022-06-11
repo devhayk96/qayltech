@@ -15,10 +15,18 @@ class CreatePatientsTable extends Migration
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('country_id')->constrained('countries');
-            $table->foreignId('organization_id')->nullable()->constrained('organizations');
-            $table->foreignId('hospital_id')->nullable()->constrained('hospitals');
+            $table->foreignId('user_id')
+                ->constrained('users')->cascadeOnDelete();
+
+            $table->foreignId('country_id')
+                ->constrained('countries')->cascadeOnDelete();
+
+            $table->foreignId('organization_id')->nullable()
+                ->constrained('organizations')->nullOnDelete();
+
+            $table->foreignId('hospital_id')->nullable()
+                ->constrained('hospitals')->nullOnDelete();
+
             $table->string('first_name');
             $table->string('last_name');
             $table->timestamp('birth_date');
@@ -30,6 +38,7 @@ class CreatePatientsTable extends Migration
             $table->boolean('is_individual')->comment('անհատական շահառու');
             $table->string('image')->nullable();
             $table->string('pdf')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });

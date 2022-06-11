@@ -48,5 +48,9 @@ class Patient extends Model
         return $this->hasMany(PatientsAdditionalinfo::class);
     }
 
+    public function workoutInfos()
+    {
+        return $this->hasMany(PatientsWorkoutinfo::class);
+    }
 
 }

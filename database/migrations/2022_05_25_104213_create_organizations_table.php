@@ -15,11 +15,14 @@ class CreateOrganizationsTable extends Migration
     {
         Schema::create('organizations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')
+                ->constrained('users')->cascadeOnDelete();
             $table->string('name');
             $table->string('address');
-            $table->foreignId('category_id')->constrained('categories');
-            $table->foreignId('country_id')->constrained('countries');
+            $table->foreignId('category_id')->nullable()
+                ->constrained('categories')->nullOnDelete();
+            $table->foreignId('country_id')
+                ->constrained('countries')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });

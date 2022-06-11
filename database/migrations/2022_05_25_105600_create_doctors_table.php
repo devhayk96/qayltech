@@ -19,9 +19,12 @@ class CreateDoctorsTable extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('profession');
-            $table->foreignId('country_id')->constrained('countries');
-            $table->foreignId('organization_id')->nullable()->constrained('organizations')->nullOnDelete();
-            $table->foreignId('hospital_id')->nullable()->constrained('hospitals')->nullOnDelete();
+            $table->foreignId('country_id')
+                ->constrained('countries')->cascadeOnDelete();
+            $table->foreignId('organization_id')->nullable()
+                ->constrained('organizations')->cascadeOnDelete();
+            $table->foreignId('hospital_id')->nullable()
+                ->constrained('hospitals')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });
