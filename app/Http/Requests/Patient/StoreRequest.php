@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Requests\Patient;
-
+use App\Rules\ImageRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
@@ -28,7 +28,7 @@ class StoreRequest extends FormRequest
             'disabilityCategory' => 'nullable|string',
             'injury' => 'nullable|string|max:191',
             'workoutBegin' => 'nullable|date',
-            'image' => 'nullable|text',
+            'image' => ['nullable', 'text', new ImageRule()],
             'pdf' => ['nullable', 'mimes:pdf', 'max:1024'],
         ];
     }
