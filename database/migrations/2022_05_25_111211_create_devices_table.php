@@ -16,9 +16,12 @@ class CreateDevicesTable extends Migration
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
-            $table->foreignId('country_id')->constrained('countries');
-            $table->foreignId('organization_id')->nullable()->constrained('organizations');
-            $table->foreignId('hospital_id')->nullable()->constrained('hospitals');
+            $table->foreignId('country_id')->nullable()
+                ->constrained('countries')->nullOnDelete();
+            $table->foreignId('organization_id')->nullable()
+                ->constrained('organizations')->nullOnDelete();
+            $table->foreignId('hospital_id')->nullable()
+                ->constrained('hospitals')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });

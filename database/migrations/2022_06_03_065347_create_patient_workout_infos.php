@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class PatientAdditionalInfosTable extends Migration
+class CreatePatientWorkoutInfos extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,12 @@ class PatientAdditionalInfosTable extends Migration
      */
     public function up()
     {
-        Schema::create('patient_additional_infos', function (Blueprint $table) {
+        Schema::create('patient_workout_infos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('patient_id')
                 ->constrained('patients')->cascadeOnDelete();
 
-            $table->foreignId('workout_id')->nullable()
-                ->constrained('patient_workout_infos')->nullOnDelete();
-
-            $table->string('key');
-            $table->string('value');
-            $table->unique(['patient_id', 'key', 'value']);
+            $table->tinyInteger('status');
             $table->timestamps();
         });
     }
@@ -35,6 +30,6 @@ class PatientAdditionalInfosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('patient_additional_infos');
+        Schema::dropIfExists('patient_workout_infos');
     }
 }

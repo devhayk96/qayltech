@@ -68,10 +68,15 @@ Route::group(['middleware' => ['cors', 'json.response', 'auth:api']], function (
     Route::group(['prefix' => 'patients/{patient}'], function() {
         Route::group(['prefix' => 'additional-infos'], function() {
             Route::get('', [PatientsController::class, 'additionalInfos']);
-            Route::post('', [PatientsController::class, 'createAdditionalInfo']);
-            Route::put('{id}', [PatientsController::class, 'updateAdditionalInfo']);
+            Route::post('', [PatientsController::class, 'storeAdditionalInfo']);
+        });
+
+        Route::group(['prefix' => 'workout-infos'], function() {
+            Route::get('', [PatientsController::class, 'workoutInfos']);
+            Route::post('', [PatientsController::class, 'storeWorkoutInfo']);
         });
     });
+
     Route::get('profile', [UserController::class, 'profile']);
     Route::post('assign-patient', [PatientsController::class, 'assignPatient']);
     Route::post('logout', [AuthController::class, 'logout']);

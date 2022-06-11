@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Patient\WorkoutInfo\ListRequest as ListWorkoutInfoRequest;
+use App\Http\Requests\Patient\WorkoutInfo\StoreRequest as StoreWorkoutInfoRequest;
 use App\Models\Role;
 use App\Models\Doctor;
 use App\Models\Patient;
@@ -23,7 +25,7 @@ class PatientsController extends BaseController
     public function __construct()
     {
         parent::__construct();
-        $this->middleware(["permission:{$this->permissionKeyName} assign,api"])->only(['assignPatient']);
+        $this->middleware(["permission:{$this->permissionKeyName} assign,api"])->only('assignPatient');
     }
 
     protected function resourceName() : string
@@ -175,15 +177,33 @@ class PatientsController extends BaseController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Archive the specified patient in database.
      *
      * @param  int  $id
-     * @return Response
+     * @return JsonResponse
      */
     public function destroy($id)
     {
         if (Patient::query()->where('id', $id)->delete()) {
             return $this->sendResponse([], 'Patient archived successfully');
+        }
+
+        return $this->sendError('Patient not found');
+    }
+
+    public function delete($id)
+    {
+        if (Patient::query()->where('id', $id)->forceDelete()) {
+            return $this->sendResponse([], 'Patient deleted successfully');
+        }
+
+        return $this->sendError('Patient not found');
+    }
+
+    public function restore($id)
+    {
+        if (Patient::query()->where('id', $id)->restore()) {
+            return $this->sendResponse([], 'Patient restored successfully');
         }
 
         return $this->sendError('Patient not found');
@@ -205,7 +225,7 @@ class PatientsController extends BaseController
      * @param Patient $patient
      * @return JsonResponse
      */
-    public function createAdditionalInfo(AdditionalInfoStoreRequest $request, Patient $patient)
+    public function storeAdditionalInfo(AdditionalInfoStoreRequest $request, Patient $patient)
     {
         $newInfo = $patient->additionalInfos()->create([
             'key' => $request->get('key'),
@@ -244,21 +264,20 @@ class PatientsController extends BaseController
         return $this->sendResponse($doctor, 'Patient successfully assigned');
     }
 
-    public function delete($id)
+    public function workoutInfos(ListWorkoutInfoRequest $request, Patient $patient)
     {
-        if (Patient::query()->where('id', $id)->forceDelete()) {
-            return $this->sendResponse([], 'Patient deleted successfully');
-        }
-
-        return $this->sendError('Patient not found');
+        return $this->sendResponse($patient->workoutInfos, 'Patient workout infos list');
     }
 
-    public function restore($id)
+    public function storeWorkoutInfo(StoreWorkoutInfoRequest $request, Patient $patient)
     {
-        if (Patient::query()->where('id', $id)->restore()) {
-            return $this->sendResponse([], 'Patient restored successfully');
-        }
+        $newInfo = $patient->workoutInfos()->create([
+            'key' => $request->get('key'),
+            'status' => $request->get('status'),
+        ]);
 
-        return $this->sendError('Patient not found');
+        return $this->sendResponse($newInfo, 'Workout information successfully saved');
     }
+
+
 }

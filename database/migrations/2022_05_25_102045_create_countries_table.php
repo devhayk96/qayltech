@@ -16,7 +16,8 @@ class CreateCountriesTable extends Migration
     {
         Schema::create('countries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')
+                ->constrained('users')->cascadeOnDelete();
             $table->string('name')->unique();
             $table->timestamps();
             $table->softDeletes();
