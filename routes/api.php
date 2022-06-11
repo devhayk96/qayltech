@@ -25,6 +25,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'index']);
 
+Route::group(['middleware' => ['cors', 'auth:api']], function () {
+    Route::apiResource('countries', CountriesController::class);
+    Route::post('countries-delete/{id}', [CountriesController::class, 'delete']);
+    Route::post('countries-destroy/{id}', [CountriesController::class, 'destroy']);
+    Route::post('countries-restore/{id}', [CountriesController::class, 'restore']);
+});
+
 Route::group(['middleware' => ['cors', 'json.response', 'auth:api']], function () {
     Route::get('user', function (Request $request) {
         return $request->user();
@@ -34,11 +41,6 @@ Route::group(['middleware' => ['cors', 'json.response', 'auth:api']], function (
     Route::post('categories-delete/{id}', [CategoriesController::class, 'delete']);
     Route::post('categories-destroy/{id}', [CategoriesController::class, 'destroy']);
     Route::post('categories-restore/{id}', [CategoriesController::class, 'restore']);
-
-    Route::apiResource('countries', CountriesController::class);
-    Route::post('countries-delete/{id}', [CountriesController::class, 'delete']);
-    Route::post('countries-destroy/{id}', [CountriesController::class, 'destroy']);
-    Route::post('countries-restore/{id}', [CountriesController::class, 'restore']);
 
     Route::apiResource('devices', DevicesController::class);
     Route::post('devices-delete/{id}', [DevicesController::class, 'delete']);
