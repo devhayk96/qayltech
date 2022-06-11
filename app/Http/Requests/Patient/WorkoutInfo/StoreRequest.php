@@ -17,7 +17,7 @@ class StoreRequest extends FormRequest
         return [
             'deviceId' => 'required|exists:devices,id',
             'additionalInfos' => 'array',
-            'status' => 'required|in:'. implode(WorkoutStatuses::ALL)
+            'status' => 'required|in:'. implode(",",WorkoutStatuses::ALL)
         ];
     }
 }

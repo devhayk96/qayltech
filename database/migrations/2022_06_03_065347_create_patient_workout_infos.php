@@ -15,8 +15,8 @@ class CreatePatientWorkoutInfos extends Migration
     {
         Schema::create('patient_workout_infos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('patient_id')
-                ->constrained('patients')->cascadeOnDelete();
+            $table->foreignId('patient_id')->constrained('patients')->cascadeOnDelete();
+            $table->foreignId('device_id')->constrained('devices')->cascadeOnDelete();
 
             $table->tinyInteger('status');
             $table->timestamps();

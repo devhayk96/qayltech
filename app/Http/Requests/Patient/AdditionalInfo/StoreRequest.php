@@ -21,6 +21,7 @@ class StoreRequest extends FormRequest
 
         return [
             'key' => 'required|string|max:255',
+            'workoutId' => 'nullable|exists:patient_workout_infos,id',
             'value' => [
                 'required',
                 'string',
