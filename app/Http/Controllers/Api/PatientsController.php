@@ -230,6 +230,7 @@ class PatientsController extends BaseController
         $newInfo = $patient->additionalInfos()->create([
             'key' => $request->get('key'),
             'value' => $request->get('value'),
+            'workout_id' => $request->get('workoutId'),
         ]);
 
         return $this->sendResponse($newInfo, 'Additional information successfully created');
@@ -275,7 +276,6 @@ class PatientsController extends BaseController
             'key' => $request->get('key'),
             'status' => $request->get('status'),
         ]);
-
         return $this->sendResponse($newInfo, 'Workout information successfully saved');
     }
 
