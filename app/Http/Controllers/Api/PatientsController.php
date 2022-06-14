@@ -276,6 +276,19 @@ class PatientsController extends BaseController
             'key' => $request->get('key'),
             'status' => $request->get('status'),
         ]);
+
+        $additionalInfos = $request->get('additionalInfos');
+
+        if ($additionalInfos && !empty($additionalInfos)) {
+            foreach ($additionalInfos as $additionalInfo) {
+                $newInfo->additionalInfos()->create([
+                    'patient_id' => $patient->id,
+                    'key' => $additionalInfo['key'],
+                    'value' => $additionalInfo['value']
+                ]);
+            }
+        }
+
         return $this->sendResponse($newInfo, 'Workout information successfully saved');
     }
 
