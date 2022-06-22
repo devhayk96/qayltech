@@ -18,7 +18,7 @@ class CountriesController extends BaseController
         return 'countries';
     }
 
-    protected function roleName() : string
+    protected function modelOrRoleName() : string
     {
         return 'country';
     }
@@ -91,38 +91,6 @@ class CountriesController extends BaseController
     public function update(Request $request, $id)
     {
         //
-    }
-
-    /**
-     * Archive the specified country in database.
-     *
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function destroy($userId)
-    {
-        return $this->removeResource($userId, 'delete', 'archive');
-    }
-
-    /**
-     * Permanently delete the specified country from database
-     *
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function delete($userId)
-    {
-        return $this->removeResource($userId, 'forceDelete', 'permanently delete');
-    }
-
-    /**
-     * Restore temporary deleted(archived) country
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function restore($userId)
-    {
-        return $this->removeResource($userId, 'restore', 'restore');
     }
 
 }

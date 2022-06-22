@@ -19,7 +19,7 @@ class OrganizationsController extends BaseController
         return 'organizations';
     }
 
-    protected function roleName() : string
+    protected function modelOrRoleName() : string
     {
         return 'organization';
     }
@@ -99,35 +99,4 @@ class OrganizationsController extends BaseController
         //
     }
 
-    /**
-     * Archive the specified organization in database.
-     *
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function destroy($userId)
-    {
-        return $this->removeResource($userId, 'delete', 'archive');
-    }
-
-    /**
-     * Permanently delete the specified organization from database
-     *
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function delete($userId)
-    {
-        return $this->removeResource($userId, 'forceDelete', 'permanently delete');
-    }
-
-    /**
-     * Restore temporary deleted(archived) organization
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function restore($userId)
-    {
-        return $this->removeResource($userId, 'restore', 'restore');
-    }
 }

@@ -19,7 +19,7 @@ class HospitalsController extends BaseController
         return 'hospitals';
     }
 
-    protected function roleName() : string
+    protected function modelOrRoleName() : string
     {
         return 'hospital';
     }
@@ -103,35 +103,4 @@ class HospitalsController extends BaseController
         //
     }
 
-    /**
-     * Archive the specified hospital in database.
-     *
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function destroy($userId)
-    {
-        return $this->removeResource($userId, 'delete', 'archive');
-    }
-
-    /**
-     * Permanently delete the specified hospital from database
-     *
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function delete($userId)
-    {
-        return $this->removeResource($userId, 'forceDelete', 'permanently delete');
-    }
-
-    /**
-     * Restore temporary deleted(archived) hospital
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function restore($userId)
-    {
-        return $this->removeResource($userId, 'restore', 'restore');
-    }
 }
