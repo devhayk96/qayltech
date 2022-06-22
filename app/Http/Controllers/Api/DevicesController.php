@@ -16,6 +16,11 @@ class DevicesController extends BaseController
         return 'devices';
     }
 
+    protected function roleName() : string
+    {
+        return 'device';
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -91,35 +96,34 @@ class DevicesController extends BaseController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Archive the specified device in database.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $userId
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($userId)
     {
-        if (Device::query()->where('id', $id)->delete()) {
-            return $this->sendResponse([], 'Device archived successfully');
-        }
-
-        return $this->sendError('Device not found');
+        return $this->removeResource($userId, 'delete', 'archive');
     }
 
-    public function delete($id)
+    /**
+     * Permanently delete the specified device from database
+     *
+     * @param $userId
+     * @return JsonResponse
+     */
+    public function delete($userId)
     {
-        if (Device::query()->where('id', $id)->forceDelete()) {
-            return $this->sendResponse([], 'Device deleted successfully');
-        }
-
-        return $this->sendError('Device not found');
+        return $this->removeResource($userId, 'forceDelete', 'permanently delete');
     }
 
-    public function restore($id)
+    /**
+     * Restore temporary deleted(archived) device
+     * @param $userId
+     * @return JsonResponse
+     */
+    public function restore($userId)
     {
-        if (Device::query()->where('id', $id)->restore()) {
-            return $this->sendResponse([], 'Device restored successfully');
-        }
-
-        return $this->sendError('Device not found');
+        return $this->removeResource($userId, 'restore', 'restore');
     }
 }

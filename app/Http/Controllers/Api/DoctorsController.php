@@ -19,6 +19,11 @@ class DoctorsController extends BaseController
         return 'doctors';
     }
 
+    protected function roleName() : string
+    {
+        return 'doctor';
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -108,35 +113,34 @@ class DoctorsController extends BaseController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Archive the specified doctor in database.
      *
-     * @param  int  $id
-     * @return Response
+     * @param $userId
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($userId)
     {
-        if (Doctor::query()->where('id', $id)->delete()) {
-            return $this->sendResponse([], 'Doctor archived successfully');
-        }
-
-        return $this->sendError('Doctor not found');
+        return $this->removeResource($userId, 'delete', 'archive');
     }
 
-    public function delete($id)
+    /**
+     * Permanently delete the specified doctor from database
+     *
+     * @param $userId
+     * @return JsonResponse
+     */
+    public function delete($userId)
     {
-        if (Doctor::query()->where('id', $id)->forceDelete()) {
-            return $this->sendResponse([], 'Doctor deleted successfully');
-        }
-
-        return $this->sendError('Doctor not found');
+        return $this->removeResource($userId, 'forceDelete', 'permanently delete');
     }
 
-    public function restore($id)
+    /**
+     * Restore temporary deleted(archived) doctor
+     * @param $userId
+     * @return JsonResponse
+     */
+    public function restore($userId)
     {
-        if (Doctor::query()->where('id', $id)->restore()) {
-            return $this->sendResponse([], 'Doctor restored successfully');
-        }
-
-        return $this->sendError('Doctor not found');
+        return $this->removeResource($userId, 'restore', 'restore');
     }
 }

@@ -19,6 +19,11 @@ class OrganizationsController extends BaseController
         return 'organizations';
     }
 
+    protected function roleName() : string
+    {
+        return 'organization';
+    }
+
     /**
      * Return a listing of the organizations.
      *
@@ -95,35 +100,34 @@ class OrganizationsController extends BaseController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Archive the specified organization in database.
      *
-     * @param  int  $id
-     * @return Response
+     * @param $userId
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($userId)
     {
-        if (Organization::query()->where('id', $id)->delete()) {
-            return $this->sendResponse([], 'Organization archived successfully');
-        }
-
-        return $this->sendError('Organization not found');
+        return $this->removeResource($userId, 'delete', 'archive');
     }
 
-    public function delete($id)
+    /**
+     * Permanently delete the specified organization from database
+     *
+     * @param $userId
+     * @return JsonResponse
+     */
+    public function delete($userId)
     {
-        if (Organization::query()->where('id', $id)->forceDelete()) {
-            return $this->sendResponse([], 'Organization deleted successfully');
-        }
-
-        return $this->sendError('Organization not found');
+        return $this->removeResource($userId, 'forceDelete', 'permanently delete');
     }
 
-    public function restore($id)
+    /**
+     * Restore temporary deleted(archived) organization
+     * @param $userId
+     * @return JsonResponse
+     */
+    public function restore($userId)
     {
-        if (Organization::query()->where('id', $id)->restore()) {
-            return $this->sendResponse([], 'Organization restored successfully');
-        }
-
-        return $this->sendError('Organization not found');
+        return $this->removeResource($userId, 'restore', 'restore');
     }
 }

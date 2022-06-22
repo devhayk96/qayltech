@@ -19,6 +19,11 @@ class HospitalsController extends BaseController
         return 'hospitals';
     }
 
+    protected function roleName() : string
+    {
+        return 'hospital';
+    }
+
     /**
      * Return a listing of the hospitals.
      *
@@ -101,43 +106,32 @@ class HospitalsController extends BaseController
     /**
      * Archive the specified hospital in database.
      *
-     * @param  int  $id
+     * @param $userId
      * @return JsonResponse
      */
-    public function destroy($id): JsonResponse
+    public function destroy($userId)
     {
-        if (Hospital::query()->where('id', $id)->delete()) {
-            return $this->sendResponse([], 'Hospital archived successfully');
-        }
-
-        return $this->sendError('Hospital not found');
+        return $this->removeResource($userId, 'delete', 'archive');
     }
 
     /**
      * Permanently delete the specified hospital from database
-     * @param $id
+     *
+     * @param $userId
      * @return JsonResponse
      */
-    public function delete($id): JsonResponse
+    public function delete($userId)
     {
-        if (Hospital::query()->where('id', $id)->forceDelete()) {
-            return $this->sendResponse([], 'Hospital deleted successfully');
-        }
-
-        return $this->sendError('Hospital not found');
+        return $this->removeResource($userId, 'forceDelete', 'permanently delete');
     }
 
     /**
-     * Restore the specified hospital in database
-     * @param $id
+     * Restore temporary deleted(archived) hospital
+     * @param $userId
      * @return JsonResponse
      */
-    public function restore($id): JsonResponse
+    public function restore($userId)
     {
-        if (Hospital::query()->where('id', $id)->restore()) {
-            return $this->sendResponse([], 'Hospital restored successfully');
-        }
-
-        return $this->sendError('Hospital not found');
+        return $this->removeResource($userId, 'restore', 'restore');
     }
 }
