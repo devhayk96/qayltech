@@ -16,7 +16,7 @@ class CategoriesController extends BaseController
         return 'categories';
     }
 
-    protected function roleName() : string
+    protected function modelOrRoleName() : string
     {
         return 'category';
     }
@@ -81,35 +81,23 @@ class CategoriesController extends BaseController
         //
     }
 
-    /**
-     * Archive the specified category in database.
-     *
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function destroy($userId)
+    protected function removeResource($categoryId, $action, $actionMessage)
     {
-        return $this->removeResource($userId, 'delete', 'archive');
-    }
+        if ($category = $this->getModel()->withTrashed()->find($categoryId)) {
+            if ($action == 'restore' && !$category->trashed()) {
+                return $this->sendError("The ". $this->modelOrRoleName() ." can't be restored, because it hasn't been archived", 400);
+            }
 
-    /**
-     * Permanently delete the specified category from database
-     *
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function delete($userId)
-    {
-        return $this->removeResource($userId, 'forceDelete', 'permanently delete');
-    }
+            try {
+                $category->$action();
+            } catch (\Exception $exception) {
+                return $this->sendError([
+                    "Something went wrong. Please try again or contact the administration"
+                ], 403);
+            }
+            return $this->sendResponse([], $this->modelOrRoleName() ." {$actionMessage}d");
+        }
 
-    /**
-     * Restore temporary deleted(archived) category
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function restore($userId)
-    {
-        return $this->removeResource($userId, 'restore', 'restore');
+        return $this->sendError($this->modelOrRoleName() ." not found");
     }
 }

@@ -16,7 +16,7 @@ class DevicesController extends BaseController
         return 'devices';
     }
 
-    protected function roleName() : string
+    protected function modelOrRoleName() : string
     {
         return 'device';
     }
@@ -95,35 +95,4 @@ class DevicesController extends BaseController
         //
     }
 
-    /**
-     * Archive the specified device in database.
-     *
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function destroy($userId)
-    {
-        return $this->removeResource($userId, 'delete', 'archive');
-    }
-
-    /**
-     * Permanently delete the specified device from database
-     *
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function delete($userId)
-    {
-        return $this->removeResource($userId, 'forceDelete', 'permanently delete');
-    }
-
-    /**
-     * Restore temporary deleted(archived) device
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function restore($userId)
-    {
-        return $this->removeResource($userId, 'restore', 'restore');
-    }
 }

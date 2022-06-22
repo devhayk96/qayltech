@@ -19,7 +19,7 @@ class DoctorsController extends BaseController
         return 'doctors';
     }
 
-    protected function roleName() : string
+    protected function modelOrRoleName() : string
     {
         return 'doctor';
     }
@@ -112,35 +112,4 @@ class DoctorsController extends BaseController
         //
     }
 
-    /**
-     * Archive the specified doctor in database.
-     *
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function destroy($userId)
-    {
-        return $this->removeResource($userId, 'delete', 'archive');
-    }
-
-    /**
-     * Permanently delete the specified doctor from database
-     *
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function delete($userId)
-    {
-        return $this->removeResource($userId, 'forceDelete', 'permanently delete');
-    }
-
-    /**
-     * Restore temporary deleted(archived) doctor
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function restore($userId)
-    {
-        return $this->removeResource($userId, 'restore', 'restore');
-    }
 }

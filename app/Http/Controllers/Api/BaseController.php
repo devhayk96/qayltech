@@ -25,7 +25,18 @@ abstract class BaseController extends Controller
 
     abstract protected function resourceName(): string;
 
-    abstract protected function roleName(): string;
+    abstract protected function modelOrRoleName(): string;
+
+    public function getModel()
+    {
+        $class = "App\Models\\".ucfirst($this->modelOrRoleName());
+        return new $class;
+    }
+
+    public function getResourceModel()
+    {
+        return new User();
+    }
 
     /**
      * success response method.
@@ -71,17 +82,17 @@ abstract class BaseController extends Controller
         return response()->json($response, $code);
     }
 
-    protected function removeResource($userId, $action, $actionMessage)
+    protected function removeResource($resourceId, $action, $actionMessage)
     {
-        if ($user = User::withTrashed()->find($userId)) {
+        if ($user = $this->getResourceModel()->withTrashed()->find($resourceId)) {
             if ($user->role()->id == Role::ALL['super_admin']) {
                 return $this->sendError(["You can't {$actionMessage} the super admin user"], 403);
-            } elseif ($user->role()->id != Role::ALL[$this->roleName()]) {
-                return $this->sendError(["User role is not ". $this->roleName()], 403);
+            } elseif ($user->role()->id != Role::ALL[$this->modelOrRoleName()]) {
+                return $this->sendError(["User role is not ". $this->modelOrRoleName()], 403);
             }
 
             if ($action == 'restore' && !$user->trashed()) {
-                return $this->sendError("The ". $this->roleName() ." user can't be restored, because it hasn't been archived", 400);
+                return $this->sendError("The ". $this->modelOrRoleName() ." user can't be restored, because it hasn't been archived", 400);
             }
 
             try {
@@ -91,9 +102,41 @@ abstract class BaseController extends Controller
                     "Something went wrong. Please try again or contact the administration"
                 ], 403);
             }
-            return $this->sendResponse([], $this->roleName() ." user {$actionMessage}d");
+            return $this->sendResponse([], $this->modelOrRoleName() ." user {$actionMessage}d");
         }
 
-        return $this->sendError($this->roleName() ." user not found");
+        return $this->sendError($this->modelOrRoleName() ." user not found");
+    }
+
+    /**
+     * Archive the specified resource in database.
+     *
+     * @param $resourceId
+     * @return JsonResponse
+     */
+    public function destroy($resourceId)
+    {
+        return $this->removeResource($resourceId, 'delete', 'archive');
+    }
+
+    /**
+     * Permanently delete the specified resource from database
+     *
+     * @param $resourceId
+     * @return JsonResponse
+     */
+    public function delete($resourceId)
+    {
+        return $this->removeResource($resourceId, 'forceDelete', 'permanently delete');
+    }
+
+    /**
+     * Restore temporary deleted(archived) resource
+     * @param $resourceId
+     * @return JsonResponse
+     */
+    public function restore($resourceId)
+    {
+        return $this->removeResource($resourceId, 'restore', 'restore');
     }
 }

@@ -33,7 +33,7 @@ class PatientsController extends BaseController
         return 'patients';
     }
 
-    protected function roleName() : string
+    protected function modelOrRoleName() : string
     {
         return 'patient';
     }
@@ -179,38 +179,6 @@ class PatientsController extends BaseController
     public function update(Request $request, $id)
     {
         //
-    }
-
-    /**
-     * Archive the specified patient in database.
-     *
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function destroy($userId)
-    {
-        return $this->removeResource($userId, 'delete', 'archive');
-    }
-
-    /**
-     * Permanently delete the specified patient from database
-     *
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function delete($userId)
-    {
-        return $this->removeResource($userId, 'forceDelete', 'permanently delete');
-    }
-
-    /**
-     * Restore temporary deleted(archived) patient
-     * @param $userId
-     * @return JsonResponse
-     */
-    public function restore($userId)
-    {
-        return $this->removeResource($userId, 'restore', 'restore');
     }
 
     /**
