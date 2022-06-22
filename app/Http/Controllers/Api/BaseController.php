@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 
@@ -22,6 +24,8 @@ abstract class BaseController extends Controller
     }
 
     abstract protected function resourceName(): string;
+
+    abstract protected function roleName(): string;
 
     /**
      * success response method.
@@ -65,5 +69,31 @@ abstract class BaseController extends Controller
         }
 
         return response()->json($response, $code);
+    }
+
+    protected function removeResource($userId, $action, $actionMessage)
+    {
+        if ($user = User::withTrashed()->find($userId)) {
+            if ($user->role()->id == Role::ALL['super_admin']) {
+                return $this->sendError(["You can't {$actionMessage} the super admin user"], 403);
+            } elseif ($user->role()->id != Role::ALL[$this->roleName()]) {
+                return $this->sendError(["User role is not ". $this->roleName()], 403);
+            }
+
+            if ($action == 'restore' && !$user->trashed()) {
+                return $this->sendError("The ". $this->roleName() ." user can't be restored, because it hasn't been archived", 400);
+            }
+
+            try {
+                $user->$action();
+            } catch (\Exception $exception) {
+                return $this->sendError([
+                    "Something went wrong. Please try again or contact the administration"
+                ], 403);
+            }
+            return $this->sendResponse([], $this->roleName() ." user {$actionMessage}d");
+        }
+
+        return $this->sendError($this->roleName() ." user not found");
     }
 }
