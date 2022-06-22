@@ -16,6 +16,11 @@ class CategoriesController extends BaseController
         return 'categories';
     }
 
+    protected function roleName() : string
+    {
+        return 'category';
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -79,33 +84,32 @@ class CategoriesController extends BaseController
     /**
      * Archive the specified category in database.
      *
-     * @param  int  $id
+     * @param $userId
      * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($userId)
     {
-        if (Category::query()->where('id', $id)->delete()) {
-            return $this->sendResponse([], 'Category archived successfully');
-        }
-
-        return $this->sendError('Category not found');
+        return $this->removeResource($userId, 'delete', 'archive');
     }
 
-    public function delete($id)
+    /**
+     * Permanently delete the specified category from database
+     *
+     * @param $userId
+     * @return JsonResponse
+     */
+    public function delete($userId)
     {
-        if (Category::query()->where('id', $id)->forceDelete()) {
-            return $this->sendResponse([], 'Category deleted successfully');
-        }
-
-        return $this->sendError('Category not found');
+        return $this->removeResource($userId, 'forceDelete', 'permanently delete');
     }
 
-    public function restore($id)
+    /**
+     * Restore temporary deleted(archived) category
+     * @param $userId
+     * @return JsonResponse
+     */
+    public function restore($userId)
     {
-        if (Category::query()->where('id', $id)->restore()) {
-            return $this->sendResponse([], 'Category restored successfully');
-        }
-
-        return $this->sendError('Category not found');
+        return $this->removeResource($userId, 'restore', 'restore');
     }
 }

@@ -33,6 +33,11 @@ class PatientsController extends BaseController
         return 'patients';
     }
 
+    protected function roleName() : string
+    {
+        return 'patient';
+    }
+
     /**
      * Display a listing of the patients.
      *
@@ -179,34 +184,33 @@ class PatientsController extends BaseController
     /**
      * Archive the specified patient in database.
      *
-     * @param  int  $id
+     * @param $userId
      * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($userId)
     {
-        if (Patient::query()->where('id', $id)->delete()) {
-            return $this->sendResponse([], 'Patient archived successfully');
-        }
-
-        return $this->sendError('Patient not found');
+        return $this->removeResource($userId, 'delete', 'archive');
     }
 
-    public function delete($id)
+    /**
+     * Permanently delete the specified patient from database
+     *
+     * @param $userId
+     * @return JsonResponse
+     */
+    public function delete($userId)
     {
-        if (Patient::query()->where('id', $id)->forceDelete()) {
-            return $this->sendResponse([], 'Patient deleted successfully');
-        }
-
-        return $this->sendError('Patient not found');
+        return $this->removeResource($userId, 'forceDelete', 'permanently delete');
     }
 
-    public function restore($id)
+    /**
+     * Restore temporary deleted(archived) patient
+     * @param $userId
+     * @return JsonResponse
+     */
+    public function restore($userId)
     {
-        if (Patient::query()->where('id', $id)->restore()) {
-            return $this->sendResponse([], 'Patient restored successfully');
-        }
-
-        return $this->sendError('Patient not found');
+        return $this->removeResource($userId, 'restore', 'restore');
     }
 
     /**
