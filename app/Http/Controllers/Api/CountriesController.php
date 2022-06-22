@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\Country\StoreRequest;
 use App\Models\Country;
 use App\Models\Role;
+use App\Models\User;
 use App\Services\User\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,6 +16,11 @@ class CountriesController extends BaseController
     protected function resourceName() : string
     {
         return 'countries';
+    }
+
+    protected function roleName() : string
+    {
+        return 'country';
     }
 
     /**
@@ -88,36 +94,35 @@ class CountriesController extends BaseController
     }
 
     /**
-     * Remove the specified country from database.
+     * Archive the specified country in database.
      *
-     * @param $id
+     * @param $userId
      * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($userId)
     {
-        if (Country::query()->where('id', $id)->delete()) {
-            return $this->sendResponse([], 'Country archived successfully');
-        }
-
-        return $this->sendError('Country not found');
+        return $this->removeResource($userId, 'delete', 'archive');
     }
 
-    public function delete($id)
+    /**
+     * Permanently delete the specified country from database
+     *
+     * @param $userId
+     * @return JsonResponse
+     */
+    public function delete($userId)
     {
-        if (Country::query()->where('id', $id)->forceDelete()) {
-            return $this->sendResponse([], 'Country deleted successfully');
-        }
-
-        return $this->sendError('Country not found');
+        return $this->removeResource($userId, 'forceDelete', 'permanently delete');
     }
 
-    public function restore($id)
+    /**
+     * Restore temporary deleted(archived) country
+     * @param $userId
+     * @return JsonResponse
+     */
+    public function restore($userId)
     {
-        if (Country::query()->where('id', $id)->restore()) {
-            return $this->sendResponse([], 'Country restored successfully');
-        }
-
-        return $this->sendError('Country not found');
+        return $this->removeResource($userId, 'restore', 'restore');
     }
 
 }
