@@ -26,48 +26,58 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [AuthController::class, 'index']);
 
 Route::group(['middleware' => ['cors', 'auth:api']], function () {
-    Route::apiResource('countries', CountriesController::class);
-    Route::post('countries-delete/{id}', [CountriesController::class, 'delete']);
-    Route::post('countries-destroy/{id}', [CountriesController::class, 'destroy']);
-    Route::post('countries-restore/{id}', [CountriesController::class, 'restore']);
-});
-
-Route::group(['middleware' => ['cors', 'json.response', 'auth:api']], function () {
     Route::get('user', function (Request $request) {
         return $request->user();
     });
 
+    Route::apiResource('countries', CountriesController::class);
+    Route::group(['prefix' => 'countries/{userId}'], function() {
+        Route::post('delete', [CountriesController::class, 'delete']);
+        Route::post('destroy', [CountriesController::class, 'destroy']);
+        Route::post('restore', [CountriesController::class, 'restore']);
+    });
+
     Route::apiResource('categories', CategoriesController::class);
-    Route::post('categories-delete/{id}', [CategoriesController::class, 'delete']);
-    Route::post('categories-destroy/{id}', [CategoriesController::class, 'destroy']);
-    Route::post('categories-restore/{id}', [CategoriesController::class, 'restore']);
+    Route::group(['prefix' => 'categories/{id}'], function() {
+        Route::post('delete', [CategoriesController::class, 'delete']);
+        Route::post('destroy', [CategoriesController::class, 'destroy']);
+        Route::post('restore', [CategoriesController::class, 'restore']);
+    });
 
     Route::apiResource('devices', DevicesController::class);
-    Route::post('devices-delete/{id}', [DevicesController::class, 'delete']);
-    Route::post('devices-destroy/{id}', [DevicesController::class, 'destroy']);
-    Route::post('devices-restore/{id}', [DevicesController::class, 'restore']);
+    Route::group(['prefix' => 'devices/{id}'], function() {
+        Route::post('delete', [DevicesController::class, 'delete']);
+        Route::post('destroy', [DevicesController::class, 'destroy']);
+        Route::post('restore', [DevicesController::class, 'restore']);
+    });
 
     Route::apiResource('doctors', DoctorsController::class);
-    Route::post('doctors-delete/{id}', [DoctorsController::class, 'delete']);
-    Route::post('doctors-destroy/{id}', [DoctorsController::class, 'destroy']);
-    Route::post('doctors-restore/{id}', [DoctorsController::class, 'restore']);
+    Route::group(['prefix' => 'doctors/{userId}'], function() {
+        Route::post('delete', [DoctorsController::class, 'delete']);
+        Route::post('destroy', [DoctorsController::class, 'destroy']);
+        Route::post('restore', [DoctorsController::class, 'restore']);
+    });
 
     Route::apiResource('hospitals', HospitalsController::class);
-    Route::post('hospitals-delete/{id}', [HospitalsController::class, 'delete']);
-    Route::post('hospitals-destroy/{id}', [HospitalsController::class, 'destroy']);
-    Route::post('hospitals-restore/{id}', [HospitalsController::class, 'restore']);
+    Route::group(['prefix' => 'hospitals/{userId}'], function() {
+        Route::post('delete', [HospitalsController::class, 'delete']);
+        Route::post('destroy', [HospitalsController::class, 'destroy']);
+        Route::post('restore', [HospitalsController::class, 'restore']);
+    });
 
     Route::apiResource('organizations', OrganizationsController::class);
-    Route::post('organizations-delete/{id}', [OrganizationsController::class, 'delete']);
-    Route::post('organizations-destroy/{id}', [OrganizationsController::class, 'destroy']);
-    Route::post('organizations-restore/{id}', [OrganizationsController::class, 'restore']);
+    Route::group(['prefix' => 'organizations/{userId}'], function() {
+        Route::post('delete', [OrganizationsController::class, 'delete']);
+        Route::post('destroy', [OrganizationsController::class, 'destroy']);
+        Route::post('restore', [OrganizationsController::class, 'restore']);
+    });
 
     Route::apiResource('patients', PatientsController::class);
-    Route::post('patients-delete/{id}', [PatientsController::class, 'delete']);
-    Route::post('patients-destroy/{id}', [PatientsController::class, 'destroy']);
-    Route::post('patients-restore/{id}', [PatientsController::class, 'restore']);
-
     Route::group(['prefix' => 'patients/{patient}'], function() {
+        Route::post('delete', [PatientsController::class, 'delete']);
+        Route::post('destroy', [PatientsController::class, 'destroy']);
+        Route::post('restore', [PatientsController::class, 'restore']);
+
         Route::group(['prefix' => 'additional-infos'], function() {
             Route::get('', [PatientsController::class, 'additionalInfos']);
             Route::post('', [PatientsController::class, 'storeAdditionalInfo']);
@@ -84,7 +94,7 @@ Route::group(['middleware' => ['cors', 'json.response', 'auth:api']], function (
     Route::post('logout', [AuthController::class, 'logout']);
 });
 
-Route::group(['middleware' => ['cors', 'json.response']], function () {
+Route::group(['middleware' => ['cors']], function () {
     Route::post('login', [AuthController::class, 'login']);
 //    Route::post('register','Auth\ApiAuthController@register');
 });
