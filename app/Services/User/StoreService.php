@@ -22,7 +22,7 @@ class StoreService extends BaseCreateService
         /* need to get the password before hashing */
         request()->merge(['password' => $password]);
 
-        $this->role = Role::find($request->get('role_id'));
+        $this->role = Role::find($request->role_id);
 
         parent::__construct($request);
     }

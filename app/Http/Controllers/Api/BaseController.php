@@ -30,7 +30,7 @@ abstract class BaseController extends Controller
     public function getModel()
     {
         $class = "App\Models\\".ucfirst($this->modelOrRoleName());
-        return new $class;
+        return new $class();
     }
 
     public function getResourceModel()
