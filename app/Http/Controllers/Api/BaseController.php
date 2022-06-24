@@ -96,6 +96,8 @@ abstract class BaseController extends Controller
             }
 
             try {
+                $roleModel = $this->getModel()->withTrashed()->where('user_id', $user->id)->first();
+                $roleModel->$action();
                 $user->$action();
             } catch (\Exception $exception) {
                 return $this->sendError([
