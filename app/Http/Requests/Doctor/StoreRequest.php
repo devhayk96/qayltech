@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Doctor;
 
+use App\Rules\EmailRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
@@ -20,7 +21,7 @@ class StoreRequest extends FormRequest
             'hospitalId' => 'required|exists:hospitals,id',
             'countryId' => 'required|exists:countries,id',
             'organizationId' => 'required|exists:organizations,id',
-            'email' => 'required|unique:users,email',
+            'email' => ['required', new EmailRule(), 'unique:users,email'],
         ];
     }
 }
