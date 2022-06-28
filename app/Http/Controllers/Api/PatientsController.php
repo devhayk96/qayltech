@@ -16,6 +16,7 @@ use App\Http\Requests\Patient\AssignPatientRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -115,8 +116,8 @@ class PatientsController extends BaseController
                 $imageType = $explodeImage[1];
                 $image_base64 = base64_decode($base64Image[1]);
                 $uniqueId = uniqid();
-                $filePath = "/images/patients/{$uniqueId}.{$imageType}";
-                Storage::disk('public')->put($filePath, $image_base64);
+                $imagePath = "/images/patients/{$uniqueId}.{$imageType}";
+                Storage::disk('public')->put($imagePath, $image_base64);
             }
 
 
@@ -135,7 +136,7 @@ class PatientsController extends BaseController
                 'workout_begin' => $request->get('workoutBegin'),
                 'injury' => $request->get('injury'),
                 'is_individual' => $isIndividual,
-                'image' => $filePath,
+                'image' => $imagePath,
                 'pdf' => $pdfPath,
             ]);
 
@@ -150,6 +151,7 @@ class PatientsController extends BaseController
             return $this->sendResponse($patientUser, 'Patient successfully created');
         } catch (\Exception $exception) {
             DB::rollBack();
+            Log::error($exception->getMessage());
             return $this->sendError('Something went wrong', 500, [$exception->getMessage(), $exception->getLine()]);
         }
     }

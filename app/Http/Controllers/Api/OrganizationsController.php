@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrganizationsController extends BaseController
 {
@@ -68,6 +69,7 @@ class OrganizationsController extends BaseController
             return $this->sendResponse($organizationUser, 'Organization user successfully created');
         } catch (\Exception $exception) {
             DB::rollBack();
+            Log::error($exception->getMessage());
             return $this->sendError('Something went wrong', 500, [$exception->getMessage()]);
         }
     }
