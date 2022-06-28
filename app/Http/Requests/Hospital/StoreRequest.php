@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Hospital;
 
+use App\Rules\EmailRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
@@ -19,7 +20,7 @@ class StoreRequest extends FormRequest
             'categoryId' => 'required|exists:categories,id',
             'organizationId' => 'nullable|exists:organizations,id',
             'countryId' => 'required|exists:countries,id',
-            'email' => 'required|unique:users,email',
+            'email' => ['required', new EmailRule(), 'unique:users,email'],
         ];
     }
 }
