@@ -28,7 +28,13 @@ class StoreRequest extends FormRequest
             'disabilityCategory' => 'nullable|string',
             'injury' => 'nullable|string|max:191',
             'workoutBegin' => 'nullable|date',
-            'image' => ['sometimes', 'string', 'base64image'],
+            'image' => [
+                'sometimes',
+                'image',
+                'mimes:png,jpg,jpeg,webp',
+//                'string',
+//                'base64image'
+            ],
             'pdf' => ['nullable', 'mimes:pdf', 'max:1024'],
         ];
     }

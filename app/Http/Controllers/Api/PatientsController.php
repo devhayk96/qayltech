@@ -97,20 +97,17 @@ class PatientsController extends BaseController
 
             if ($pdf = $request->file('pdf')) {
                 $pdfExt = $pdf->getClientOriginalExtension();
-                $pdfName = Str::random(8) . "{$patientUser['id']}." . $pdfExt;
-                $pdfPath = $pdf->store('public/pdf/'. $pdfName);
+                $pdfName = uniqid() . "{$patientUser['id']}." . $pdfExt;
+                $pdfPath = $pdf->store('public/pdf/patients/'. $pdfName);
             }
 
-//
-//            if ($image = $request->file('image')) {
-//                $imageExt = $image->getClientOriginalExtension();
-//                $imageName = Str::random(8) . "{$patientUser['id']}." . $imageExt;
-//                $imagePath = $image->store('public/images/'. $imageName);
-//            }
+            if ($image = $request->file('image')) {
+                $imageExt = $image->getClientOriginalExtension();
+                $imageName = uniqid() . "{$patientUser['id']}." . $imageExt;
+                $imagePath = $image->store("public/images/patients/.". $imageName);
+            }
 
-
-
-            if ($image = $request->get('image')) {
+            /*if ($image = $request->get('image')) {
                 $base64Image = explode(";base64,", $image);
                 $explodeImage = explode("image/", $base64Image[0]);
                 $imageType = $explodeImage[1];
@@ -118,7 +115,7 @@ class PatientsController extends BaseController
                 $uniqueId = uniqid();
                 $imagePath = "/images/patients/{$uniqueId}.{$imageType}";
                 Storage::disk('public')->put($imagePath, $image_base64);
-            }
+            }*/
 
 
 
