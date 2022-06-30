@@ -32,21 +32,46 @@ class DoctorsController extends BaseController
      */
     public function index(ListRequest $request)
     {
-        $doctors = Doctor::query()
-            ->where('country_id', $request->get('countryId'));
 
-        if ($doctorName = $request->get('name')) {
-            $doctors->where('first_name', 'LIKE', $doctorName .'%');
+
+        $user = current_user()->id;
+        if (current_user_role_name() == 'organization'){
+            $orgId = Organization::query()->where('user_id', $user)->pluck('id');
+            $doctors = Doctor::query()->where('organization_id', $orgId);
+            
+            if ($doctorName = $request->get('name')) {
+                $doctors->where('first_name', 'LIKE', $doctorName .'%');
+            }
+
+            if ($organizationId = $request->get('organizationId')) {
+                $doctors->where('organization_id', $organizationId);
+            }
+            if ($hospitalId = $request->get('hospitalId')) {
+                $doctors->where('hospital_id', $hospitalId);
+            }
+
+            return $this->sendResponse($doctors->get(), 'List of doctors');
+        }
+        elseif (current_user_role_name() == 'country'){
+            $cntId = Country::query()->where('user_id', $user)->pluck('id');
+            $doctors = Doctor::query()->where('country_id', $cntId);
+
+            if ($doctorName = $request->get('name')) {
+                $doctors->where('first_name', 'LIKE', $doctorName .'%');
+            }
+
+            if ($organizationId = $request->get('organizationId')) {
+                $doctors->where('organization_id', $organizationId);
+            }
+            if ($hospitalId = $request->get('hospitalId')) {
+                $doctors->where('hospital_id', $hospitalId);
+            }
+
+            return $this->sendResponse($doctors->get(), 'List of doctors');
         }
 
-        if ($organizationId = $request->get('organizationId')) {
-            $doctors->where('organization_id', $organizationId);
-        }
-        if ($hospitalId = $request->get('hospitalId')) {
-            $doctors->where('hospital_id', $hospitalId);
-        }
 
-        return $this->sendResponse($doctors->get(), 'List of doctors');
+
     }
 
     /**

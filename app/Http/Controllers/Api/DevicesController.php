@@ -29,17 +29,37 @@ class DevicesController extends BaseController
      */
     public function index(ListRequest $request)
     {
-        $devices = Device::query()->where('country_id', $request->get('countryId'));
 
-        if ($organizationId = $request->get('organizationId')) {
-            $devices->where('hospital_id', $organizationId);
+        $user = current_user()->id;
+        if (current_user_role_name() == 'organization'){
+            $orgId = Organization::query()->where('user_id', $user)->pluck('id');
+            $devices = Device::query()->where('organization_id', $orgId);
+
+            if ($organizationId = $request->get('organizationId')) {
+                $devices->where('hospital_id', $organizationId);
+            }
+
+            if ($hospitalId = $request->get('hospitalId')) {
+                $devices->where('hospital_id', $hospitalId);
+            }
+
+            return $this->sendResponse($devices->get(), 'List of devices');
+        }
+        elseif (current_user_role_name() == 'country'){
+            $cntId = Country::query()->where('user_id', $user)->pluck('id');
+            $devices = Device::query()->where('country_id', $cntId);
+
+            if ($organizationId = $request->get('organizationId')) {
+                $devices->where('hospital_id', $organizationId);
+            }
+
+            if ($hospitalId = $request->get('hospitalId')) {
+                $devices->where('hospital_id', $hospitalId);
+            }
+
+            return $this->sendResponse($devices->get(), 'List of devices');
         }
 
-        if ($hospitalId = $request->get('hospitalId')) {
-            $devices->where('hospital_id', $hospitalId);
-        }
-
-        return $this->sendResponse($devices->get(), 'List of devices');
     }
 
     /**

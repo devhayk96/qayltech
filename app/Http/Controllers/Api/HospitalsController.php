@@ -45,7 +45,7 @@ class HospitalsController extends BaseController
 
             return $this->sendResponse($hospitals->get(), 'Hospitals List');
         }
-        if (current_user_role_name() == 'country'){
+        elseif (current_user_role_name() == 'country'){
             $cntId = Country::query()->where('user_id', $user)->pluck('id');
             $hospitals = Hospital::query()->where('country_id', $cntId);
 

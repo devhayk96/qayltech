@@ -47,26 +47,49 @@ class PatientsController extends BaseController
      */
     public function index(ListRequest $request): JsonResponse
     {
+        $user = current_user()->id;
+        if (current_user_role_name() == 'organization'){
+            $orgId = Organization::query()->where('user_id', $user)->pluck('id');
+            $patients = Patient::query()->where('organization_id', $orgId);
 
-        $patients = Patient::query()
-            ->where('country_id', $request->get('countryId'));
+            if ($doctorId = $request->get('doctorId') || (current_user_role() == Role::ALL['doctor'])) {
+                $patients->whereHas('doctors', function ($query) use ($doctorId) {
+                    $query->where('doctor_id', $doctorId);
+                });
+            }
+            if ($organizationId = $request->get('organizationId')) {
+                $patients->where('organization_id', $organizationId);
+            }
+            if ($hospitalId = $request->get('hospitalId')) {
+                $patients->where('hospital_id', $hospitalId);
+            }
+            if ($isIndividual = $request->get('isIndividual')) {
+                $patients->where('is_individual', $isIndividual);
+            }
 
-        if ($doctorId = $request->get('doctorId') || (current_user_role() == Role::ALL['doctor'])) {
-            $patients->whereHas('doctors', function ($query) use ($doctorId) {
-                $query->where('doctor_id', $doctorId);
-            });
+            return $this->sendResponse($patients->get(), 'Patients List');
         }
-        if ($organizationId = $request->get('organizationId')) {
-            $patients->where('organization_id', $organizationId);
-        }
-        if ($hospitalId = $request->get('hospitalId')) {
-            $patients->where('hospital_id', $hospitalId);
-        }
-        if ($isIndividual = $request->get('isIndividual')) {
-            $patients->where('is_individual', $isIndividual);
-        }
+        elseif (current_user_role_name() == 'country'){
+            $cntId = Country::query()->where('user_id', $user)->pluck('id');
+            $patients = Patient::query()->where('country_id', $cntId);
 
-        return $this->sendResponse($patients->get(), 'Patients List');
+            if ($doctorId = $request->get('doctorId') || (current_user_role() == Role::ALL['doctor'])) {
+                $patients->whereHas('doctors', function ($query) use ($doctorId) {
+                    $query->where('doctor_id', $doctorId);
+                });
+            }
+            if ($organizationId = $request->get('organizationId')) {
+                $patients->where('organization_id', $organizationId);
+            }
+            if ($hospitalId = $request->get('hospitalId')) {
+                $patients->where('hospital_id', $hospitalId);
+            }
+            if ($isIndividual = $request->get('isIndividual')) {
+                $patients->where('is_individual', $isIndividual);
+            }
+
+            return $this->sendResponse($patients->get(), 'Patients List');
+        }
 
     }
 
