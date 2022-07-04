@@ -51,6 +51,8 @@ class User extends Authenticatable
         'password' => 'string'
     ];
 
+    const DEFAULT_IMAGE_PATH = 'images/default-avatar.png';
+
     public function role()
     {
         return $this->roles()->first();
