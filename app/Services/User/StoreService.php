@@ -17,10 +17,16 @@ class StoreService extends BaseCreateService
     public function __construct(Request $request)
     {
         $password = generate_user_password();
-        $request->merge(['password' => $password]);
+        $request->merge([
+            'password' => $password,
+            'password_unhashed' => $password,
+        ]);
 
-        /* need to get the password before hashing */
-        request()->merge(['password' => $password]);
+//        /* need to get the password before hashing */
+//        request()->merge(['password' => $password]);
+
+        /* need to get the password without hashing */
+        request()->merge(['password_unhashed' => $password]);
 
         $this->role = Role::find($request->role_id);
 

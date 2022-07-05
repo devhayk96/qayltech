@@ -24,6 +24,8 @@ class PatientResource extends JsonResource
             'hospital_id' => $this->hospital_id,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
+            'email' => $this->user->email,
+            'password' => is_super_admin() ? $this->user->password_unhashed : null,
             'birth_date' => Carbon::parse($this->birth_date)->toDateTimeString(),
             'disability_date' => Carbon::parse($this->disability_date)->toDateTimeString(),
             'disability_reason' => $this->disability_reason,
