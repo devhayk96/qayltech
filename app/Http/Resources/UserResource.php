@@ -20,7 +20,7 @@ class UserResource extends JsonResource
             'role' => $this->role->name,
             'name' => $this->name,
             'email' => $this->email,
-            'password' => $this->password,
+            'password' => is_super_admin() ? $this->password_unhashed : null,
         ];
     }
 }
