@@ -33,14 +33,21 @@ class OrganizationsController extends BaseController
      */
     public function index(ListRequest $request): JsonResponse
     {
-        $organizations = Organization::query()
-            ->where('country_id', $request->get('countryId'));
 
-        if ($organizationName = $request->get('name')) {
-            $organizations->where('name', 'LIKE', $organizationName .'%');
+        $user = current_user()->id;
+
+        if (current_user_role_name() == 'country'){
+            $cntId = Country::query()->where('user_id', $user)->pluck('id');
+            $organizations = Organization::query()->where('country_id', $cntId);
+
+
+            if ($organizationName = $request->get('name')) {
+                $organizations->where('name', 'LIKE', $organizationName .'%');
+            }
+
+            return $this->sendResponse($organizations->get(), 'Organizations List');
         }
 
-        return $this->sendResponse($organizations->get(), 'Organizations List');
     }
 
     /**
