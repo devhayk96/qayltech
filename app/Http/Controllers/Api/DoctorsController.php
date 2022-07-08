@@ -6,6 +6,7 @@ use App\Http\Requests\Doctor\ListRequest;
 use App\Http\Requests\Doctor\StoreRequest;
 use App\Models\Doctor;
 use App\Models\Role;
+use App\Http\Resources\DoctorCollection;
 use App\Services\User\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -32,17 +33,23 @@ class DoctorsController extends BaseController
      */
     public function index(ListRequest $request)
     {
+        $doctors = Doctor::query();
 
+        if (is_super_admin()) {
 
-        $user = current_user()->id;
-        if (current_user_role_name() == 'organization'){
-            $orgId = Organization::query()->where('user_id', $user)->pluck('id');
-            $doctors = Doctor::query()->where('organization_id', $orgId);
-            
-            if ($doctorName = $request->get('name')) {
-                $doctors->where('first_name', 'LIKE', $doctorName .'%');
+            if ($countryId = $request->get('countryId')) {
+                $doctors->where('country_id', $countryId);
             }
-
+            if ($organizationId = $request->get('organizationId')) {
+                $doctors->where('organization_id', $organizationId);
+            }
+            if ($hospitalId = $request->get('hospitalId')) {
+                $doctors->where('hospital_id', $hospitalId);
+            }
+        } else {
+            if ($countryId = $request->get('countryId')) {
+                $doctors->where('country_id', $countryId);
+            }
             if ($organizationId = $request->get('organizationId')) {
                 $doctors->where('organization_id', $organizationId);
             }
@@ -50,26 +57,21 @@ class DoctorsController extends BaseController
                 $doctors->where('hospital_id', $hospitalId);
             }
 
-            return $this->sendResponse($doctors->get(), 'List of doctors');
-        }
-        elseif (current_user_role_name() == 'country'){
-            $cntId = Country::query()->where('user_id', $user)->pluck('id');
-            $doctors = Doctor::query()->where('country_id', $cntId);
-
-            if ($doctorName = $request->get('name')) {
-                $doctors->where('first_name', 'LIKE', $doctorName .'%');
+            $otherRoles = [
+                'country',
+                'organization',
+                'hospital',
+            ];
+            foreach ($otherRoles as $otherRole) {
+                if (current_user_role() == Role::ALL[$otherRole]) {
+                    $currentUser = current_user([$otherRole]);
+                    $doctors->where("{$otherRole}_id", $currentUser->{$otherRole}->id);
+                }
             }
-
-            if ($organizationId = $request->get('organizationId')) {
-                $doctors->where('organization_id', $organizationId);
-            }
-            if ($hospitalId = $request->get('hospitalId')) {
-                $doctors->where('hospital_id', $hospitalId);
-            }
-
-            return $this->sendResponse($doctors->get(), 'List of doctors');
         }
 
+
+        return $this->sendResponse(new DoctorCollection($doctors->get()), 'Doctors List');
 
 
     }

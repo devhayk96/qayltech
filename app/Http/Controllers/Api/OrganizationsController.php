@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Organization\ListRequest;
 use App\Http\Requests\Organization\StoreRequest;
+use App\Http\Resources\OrganizationCollection;
 use App\Models\Organization;
 use App\Models\Role;
 use App\Services\User\StoreService;
@@ -34,19 +35,32 @@ class OrganizationsController extends BaseController
     public function index(ListRequest $request): JsonResponse
     {
 
-        $user = current_user()->id;
+        $organizations = Organization::query();
 
-        if (current_user_role_name() == 'country'){
-            $cntId = Country::query()->where('user_id', $user)->pluck('id');
-            $organizations = Organization::query()->where('country_id', $cntId);
+        if (is_super_admin()) {
 
-
-            if ($organizationName = $request->get('name')) {
-                $organizations->where('name', 'LIKE', $organizationName .'%');
+            if ($countryId = $request->get('countryId')) {
+                $organizations->where('country_id', $countryId);
             }
 
-            return $this->sendResponse($organizations->get(), 'Organizations List');
+        } else {
+            if ($countryId = $request->get('countryId')) {
+                $organizations->where('country_id', $countryId);
+            }
+
+            $otherRoles = [
+                'country',
+            ];
+            foreach ($otherRoles as $otherRole) {
+                if (current_user_role() == Role::ALL[$otherRole]) {
+                    $currentUser = current_user([$otherRole]);
+                    $organizations->where("{$otherRole}_id", $currentUser->{$otherRole}->id);
+                }
+            }
         }
+
+
+        return $this->sendResponse(new OrganizationCollection($organizations->get()), 'Organizations List');
 
     }
 

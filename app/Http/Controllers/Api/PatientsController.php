@@ -68,6 +68,7 @@ class PatientsController extends BaseController
             if ($hospitalId = $request->get('hospitalId')) {
                 $patients->where('hospital_id', $hospitalId);
             }
+
         } elseif (is_doctor()) {
             $currentUser = current_user([Role::ALL['doctor']]);
 
@@ -75,6 +76,17 @@ class PatientsController extends BaseController
                 $query->where('doctor_id', $currentUser->doctor->id);
             });
         } else {
+
+            if ($countryId = $request->get('countryId')) {
+                $patients->where('country_id', $countryId);
+            }
+            if ($organizationId = $request->get('organizationId')) {
+                $patients->where('organization_id', $organizationId);
+            }
+            if ($hospitalId = $request->get('hospitalId')) {
+                $patients->where('hospital_id', $hospitalId);
+            }
+
             $otherRoles = [
                 'country',
                 'organization',
