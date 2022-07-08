@@ -92,7 +92,9 @@ class PatientsController extends BaseController
             $isIndividual = true;
             $imagePath = $pdfPath = null;
 
+            $deviceId = $request->get('deviceId');
             $doctorId = $request->get('doctorId');
+
             if ($doctorId || current_user_role() == Role::ALL['doctor']) {
                 $isIndividual = false;
             }
@@ -119,7 +121,7 @@ class PatientsController extends BaseController
 
 
 
-            $patient = Patient::create([
+            $patient = (new Patient())->fill([
                 'user_id' => $patientUser['id'],
                 'country_id' => $request->get('countryId'),
                 'organization_id' => $request->get('organizationId'),
@@ -137,19 +139,26 @@ class PatientsController extends BaseController
                 'pdf' => $pdfPath,
             ]);
 
-            if ($doctorId && ($deviceId = $request->get('deviceId'))) {
+            if ($patient->save() && !$isIndividual) {
                 $patient->doctors()->sync([
-                    'doctor_id' => $doctorId,
-                    'device_id' => $deviceId
+                    $doctorId => [
+                        'device_id' => $deviceId,
+                        'workout_start' => $request->get('workout_start'),
+                        'workout_end' => $request->get('workout_end'),
+                        'created_at' => now()
+                    ]
                 ]);
+
+                DB::commit();
+                return $this->sendResponse($patientUser, 'Patient successfully created');
             }
 
-            DB::commit();
-            return $this->sendResponse($patientUser, 'Patient successfully created');
+            DB::rollBack();
+            return $this->sendError("Patient doesn't created", 400);
         } catch (\Exception $exception) {
             DB::rollBack();
             Log::error($exception->getMessage());
-            return $this->sendError('Something went wrong', 500, [$exception->getMessage(), $exception->getLine()]);
+            return $this->sendError('Something went wrong', 500, [$exception->getMessage()]);
         }
     }
 
