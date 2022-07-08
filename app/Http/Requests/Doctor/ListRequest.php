@@ -15,7 +15,7 @@ class ListRequest extends FormRequest
     {
         return [
             'hospitalId' => 'nullable|exists:hospitals,id',
-            'countryId' => 'required|exists:countries,id',
+            'countryId' => 'nullable|exists:countries,id',
             'organizationId' => 'nullable|exists:organizations,id',
             'name' => 'nullable|string|max:90',
             'email' => 'nullable|string|email|max:90',

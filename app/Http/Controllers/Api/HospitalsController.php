@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Hospital\StoreRequest;
 use App\Http\Requests\Hospital\ListRequest;
+use App\Models\Country;
 use App\Models\Hospital;
+use App\Models\Organization;
 use App\Models\Role;
 use App\Services\User\StoreService;
 use Illuminate\Http\JsonResponse;
@@ -32,17 +34,38 @@ class HospitalsController extends BaseController
      */
     public function index(ListRequest $request): JsonResponse
     {
-        $country_id = $request->get('countryId');
-        $hospitals = Hospital::query()
-            ->where('country_id', $country_id);
+        $user = current_user()->id;
+        if (current_user_role_name() == 'organization'){
+            $orgId = Organization::query()->where('user_id', $user)->pluck('id');
+            $hospitals = Hospital::query()->where('organization_id', $orgId);
 
-        if ($organizationId = $request->get('organizationId')){
-            $hospitals->where('organization_id', $organizationId);
+            if ($hospitalName = $request->get('name')) {
+                $hospitals->where('name', 'LIKE', $hospitalName .'%');
+            }
+
+            return $this->sendResponse($hospitals->get(), 'Hospitals List');
         }
-        if ($hospitalName = $request->get('name')) {
-            $hospitals->where('name', 'LIKE', $hospitalName .'%');
+        elseif (current_user_role_name() == 'country'){
+            $cntId = Country::query()->where('user_id', $user)->pluck('id');
+            $hospitals = Hospital::query()->where('country_id', $cntId);
+
+            if ($hospitalName = $request->get('name')) {
+                $hospitals->where('name', 'LIKE', $hospitalName .'%');
+            }
+
+            return $this->sendResponse($hospitals->get(), 'Hospitals List');
         }
-        return $this->sendResponse($hospitals->get(), 'Hospitals List');
+//        $country_id = $request->get('countryId');
+//        $hospitals = Hospital::query()
+//            ->where('country_id', $country_id);
+//
+//        if ($organizationId = $request->get('organizationId')){
+//            $hospitals->where('organization_id', $organizationId);
+//        }
+//        if ($hospitalName = $request->get('name')) {
+//            $hospitals->where('name', 'LIKE', $hospitalName .'%');
+//        }
+//        return $this->sendResponse($hospitals->get(), 'Hospitals List');
     }
 
     /**

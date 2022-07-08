@@ -14,7 +14,7 @@ class ListRequest extends FormRequest
     public function rules()
     {
         return [
-            'countryId' => 'required|exists:countries,id',
+            'countryId' => 'nullable|exists:countries,id',
             'name' => 'nullable|string|max:90',
             'email' => 'nullable|string|email|max:90',
         ];
