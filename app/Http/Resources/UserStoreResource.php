@@ -19,7 +19,7 @@ class UserStoreResource extends JsonResource
             'user_id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'password' => request()->get('password'),
+            'password' => request()->get('password_unhashed'),
         ];
     }
 }

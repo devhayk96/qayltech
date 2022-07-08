@@ -53,4 +53,16 @@ class Patient extends Model
         return $this->hasMany(PatientsWorkoutinfo::class);
     }
 
+    public function getImagePathAttribute()
+    {
+        $imageName = $this->image ?? User::DEFAULT_IMAGE_PATH;
+        return config('app.url') . $imageName;
+    }
+
+    public function getPdfPathAttribute()
+    {
+        return $this->pdf ? config('app.url') . $this->pdf : null;
+    }
+
+
 }
