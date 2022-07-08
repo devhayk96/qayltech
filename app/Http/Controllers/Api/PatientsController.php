@@ -50,21 +50,44 @@ class PatientsController extends BaseController
      */
     public function index(ListRequest $request): JsonResponse
     {
+        $patients = Patient::query();
 
-        $patients = Patient::query()
-            ->where('country_id', $request->get('countryId'));
+        if (is_super_admin()) {
+            if ($doctorId = $request->get('doctorId')) {
+                $patients->whereHas('doctors', function ($query) use ($doctorId) {
+                    $query->where('doctor_id', $doctorId);
+                });
+            }
 
-        if ($doctorId = $request->get('doctorId') || (current_user_role() == Role::ALL['doctor'])) {
-            $patients->whereHas('doctors', function ($query) use ($doctorId) {
-                $query->where('doctor_id', $doctorId);
+            if ($countryId = $request->get('countryId')) {
+                $patients->where('country_id', $countryId);
+            }
+            if ($organizationId = $request->get('organizationId')) {
+                $patients->where('organization_id', $organizationId);
+            }
+            if ($hospitalId = $request->get('hospitalId')) {
+                $patients->where('hospital_id', $hospitalId);
+            }
+        } elseif (is_doctor()) {
+            $currentUser = current_user([Role::ALL['doctor']]);
+
+            $patients->whereHas('doctors', function ($query) use ($currentUser) {
+                $query->where('doctor_id', $currentUser->doctor->id);
             });
+        } else {
+            $otherRoles = [
+                'country',
+                'organization',
+                'hospital',
+            ];
+            foreach ($otherRoles as $otherRole) {
+                if (current_user_role() == Role::ALL[$otherRole]) {
+                    $currentUser = current_user([$otherRole]);
+                    $patients->where("{$otherRole}_id", $currentUser->{$otherRole}->id);
+                }
+            }
         }
-        if ($organizationId = $request->get('organizationId')) {
-            $patients->where('organization_id', $organizationId);
-        }
-        if ($hospitalId = $request->get('hospitalId')) {
-            $patients->where('hospital_id', $hospitalId);
-        }
+
         if ($isIndividual = $request->get('isIndividual')) {
             $patients->where('is_individual', $isIndividual);
         }
@@ -139,15 +162,17 @@ class PatientsController extends BaseController
                 'pdf' => $pdfPath,
             ]);
 
-            if ($patient->save() && !$isIndividual) {
-                $patient->doctors()->sync([
-                    $doctorId => [
-                        'device_id' => $deviceId,
-                        'workout_start' => $request->get('workout_start'),
-                        'workout_end' => $request->get('workout_end'),
-                        'created_at' => now()
-                    ]
-                ]);
+            if ($patient->save()) {
+                if (!$isIndividual) {
+                    $patient->doctors()->sync([
+                        $doctorId => [
+                            'device_id' => $deviceId,
+                            'workout_start' => $request->get('workout_start'),
+                            'workout_end' => $request->get('workout_end'),
+                            'created_at' => now()
+                        ]
+                    ]);
+                }
 
                 DB::commit();
                 return $this->sendResponse($patientUser, 'Patient successfully created');

@@ -104,6 +104,13 @@ if (! function_exists('is_super_admin')) {
     }
 }
 
+if (! function_exists('is_doctor')) {
+    function is_doctor()
+    {
+        return current_user_role() == Role::ALL['doctor'];
+    }
+}
+
 
 if (! function_exists('generate_user_password')) {
     function generate_user_password($length = 10)
