@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\MediaHelper;
 use App\Http\Requests\Patient\WorkoutInfo\ListRequest as ListWorkoutInfoRequest;
 use App\Http\Requests\Patient\WorkoutInfo\StoreRequest as StoreWorkoutInfoRequest;
+use App\Http\Resources\PatientCollection;
+use App\Http\Resources\PatientResource;
 use App\Models\Role;
 use App\Models\Doctor;
 use App\Models\Patient;
@@ -16,12 +19,13 @@ use App\Http\Requests\Patient\AssignPatientRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
 class PatientsController extends BaseController
 {
+    use MediaHelper;
+
     public function __construct()
     {
         parent::__construct();
@@ -65,8 +69,7 @@ class PatientsController extends BaseController
             $patients->where('is_individual', $isIndividual);
         }
 
-        return $this->sendResponse($patients->get(), 'Patients List');
-
+        return $this->sendResponse(new PatientCollection($patients->get()), 'Patients List');
     }
 
     /**
@@ -89,39 +92,36 @@ class PatientsController extends BaseController
             $isIndividual = true;
             $imagePath = $pdfPath = null;
 
+            $deviceId = $request->get('deviceId');
             $doctorId = $request->get('doctorId');
+
             if ($doctorId || current_user_role() == Role::ALL['doctor']) {
                 $isIndividual = false;
             }
 
             if ($pdf = $request->file('pdf')) {
-                $pdfExt = $pdf->getClientOriginalExtension();
-                $pdfName = Str::random(8) . "{$patientUser['id']}." . $pdfExt;
-                $pdfPath = $pdf->store('public/pdf/'. $pdfName);
+                $pdfData = $this->upload($pdf,'pdf/patients/', $patientUser['id']);
+                $pdfPath = $pdfData['filePath'];
             }
 
-//
-//            if ($image = $request->file('image')) {
-//                $imageExt = $image->getClientOriginalExtension();
-//                $imageName = Str::random(8) . "{$patientUser['id']}." . $imageExt;
-//                $imagePath = $image->store('public/images/'. $imageName);
-//            }
+            if ($image = $request->file('image')) {
+                $imageData = $this->upload($image,'images/patients/', $patientUser['id']);
+                $imagePath = $imageData['filePath'];
+            }
 
-
-
-            if ($image = $request->get('image')) {
+            /*if ($image = $request->get('image')) {
                 $base64Image = explode(";base64,", $image);
                 $explodeImage = explode("image/", $base64Image[0]);
                 $imageType = $explodeImage[1];
                 $image_base64 = base64_decode($base64Image[1]);
                 $uniqueId = uniqid();
-                $filePath = "/images/patients/{$uniqueId}.{$imageType}";
-                Storage::disk('public')->put($filePath, $image_base64);
-            }
+                $imagePath = "/images/patients/{$uniqueId}.{$imageType}";
+                Storage::disk('public')->put($imagePath, $image_base64);
+            }*/
 
 
 
-            $patient = Patient::create([
+            $patient = (new Patient())->fill([
                 'user_id' => $patientUser['id'],
                 'country_id' => $request->get('countryId'),
                 'organization_id' => $request->get('organizationId'),
@@ -135,22 +135,30 @@ class PatientsController extends BaseController
                 'workout_begin' => $request->get('workoutBegin'),
                 'injury' => $request->get('injury'),
                 'is_individual' => $isIndividual,
-                'image' => $filePath,
+                'image' => $imagePath,
                 'pdf' => $pdfPath,
             ]);
 
-            if ($doctorId && ($deviceId = $request->get('deviceId'))) {
+            if ($patient->save() && !$isIndividual) {
                 $patient->doctors()->sync([
-                    'doctor_id' => $doctorId,
-                    'device_id' => $deviceId
+                    $doctorId => [
+                        'device_id' => $deviceId,
+                        'workout_start' => $request->get('workout_start'),
+                        'workout_end' => $request->get('workout_end'),
+                        'created_at' => now()
+                    ]
                 ]);
+
+                DB::commit();
+                return $this->sendResponse($patientUser, 'Patient successfully created');
             }
 
-            DB::commit();
-            return $this->sendResponse($patientUser, 'Patient successfully created');
+            DB::rollBack();
+            return $this->sendError("Patient doesn't created", 400);
         } catch (\Exception $exception) {
             DB::rollBack();
-            return $this->sendError('Something went wrong', 500, [$exception->getMessage(), $exception->getLine()]);
+            Log::error($exception->getMessage());
+            return $this->sendError('Something went wrong', 500, [$exception->getMessage()]);
         }
     }
 
@@ -163,7 +171,7 @@ class PatientsController extends BaseController
     public function show($id): JsonResponse
     {
         if ($patient = Patient::with('doctors')->find($id)) {
-            return $this->sendResponse($patient, "$patient->first_name $patient->last_name");
+            return $this->sendResponse(new PatientResource($patient), "$patient->first_name $patient->last_name");
         }
 
         return $this->sendError('Patient not found');
