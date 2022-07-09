@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Hospital\StoreRequest;
 use App\Http\Requests\Hospital\ListRequest;
+use App\Http\Resources\HospitalCollection;
 use App\Models\Country;
 use App\Models\Hospital;
 use App\Models\Organization;
@@ -34,38 +35,39 @@ class HospitalsController extends BaseController
      */
     public function index(ListRequest $request): JsonResponse
     {
-        $user = current_user()->id;
-        if (current_user_role_name() == 'organization'){
-            $orgId = Organization::query()->where('user_id', $user)->pluck('id');
-            $hospitals = Hospital::query()->where('organization_id', $orgId);
 
-            if ($hospitalName = $request->get('name')) {
-                $hospitals->where('name', 'LIKE', $hospitalName .'%');
+        $hospitals = Hospital::query();
+
+        if (is_super_admin()) {
+
+            if ($countryId = $request->get('countryId')) {
+                $hospitals->where('country_id', $countryId);
+            }
+            if ($organizationId = $request->get('organizationId')) {
+                $hospitals->where('organization_id', $organizationId);
             }
 
-            return $this->sendResponse($hospitals->get(), 'Hospitals List');
-        }
-        elseif (current_user_role_name() == 'country'){
-            $cntId = Country::query()->where('user_id', $user)->pluck('id');
-            $hospitals = Hospital::query()->where('country_id', $cntId);
-
-            if ($hospitalName = $request->get('name')) {
-                $hospitals->where('name', 'LIKE', $hospitalName .'%');
+        } else {
+            if ($countryId = $request->get('countryId')) {
+                $hospitals->where('country_id', $countryId);
             }
-
-            return $this->sendResponse($hospitals->get(), 'Hospitals List');
+            if ($organizationId = $request->get('organizationId')) {
+                $hospitals->where('organization_id', $organizationId);
+            }
+            $otherRoles = [
+                'country',
+                'organization',
+            ];
+            foreach ($otherRoles as $otherRole) {
+                if (current_user_role() == Role::ALL[$otherRole]) {
+                    $currentUser = current_user([$otherRole]);
+                    $hospitals->where("{$otherRole}_id", $currentUser->{$otherRole}->id);
+                }
+            }
         }
-//        $country_id = $request->get('countryId');
-//        $hospitals = Hospital::query()
-//            ->where('country_id', $country_id);
-//
-//        if ($organizationId = $request->get('organizationId')){
-//            $hospitals->where('organization_id', $organizationId);
-//        }
-//        if ($hospitalName = $request->get('name')) {
-//            $hospitals->where('name', 'LIKE', $hospitalName .'%');
-//        }
-//        return $this->sendResponse($hospitals->get(), 'Hospitals List');
+
+
+        return $this->sendResponse(new HospitalCollection($hospitals->get()), 'Hospitals List');
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Country\StoreRequest;
+use App\Http\Resources\CountryCollection;
 use App\Models\Country;
 use App\Models\Role;
 use App\Models\User;
@@ -31,11 +32,25 @@ class CountriesController extends BaseController
      */
     public function index(Request $request): JsonResponse
     {
+
         $countries = Country::query();
-        if ($countryName = $request->get('name')) {
-            $countries->where('name', 'LIKE', $countryName .'%');
+
+        if (is_super_admin()) {
+            if ($countryId = $request->get('countryId')) {
+                $countries->where('country_id', $countryId);
+            }
+
         }
-        return $this->sendResponse($countries->get(), 'Countries List');
+
+
+        return $this->sendResponse(new CountryCollection($countries->get()), 'Countries List');
+
+
+//        $countries = Country::query();
+//        if ($countryName = $request->get('name')) {
+//            $countries->where('name', 'LIKE', $countryName .'%');
+//        }
+//        return $this->sendResponse($countries->get(), 'Countries List');
     }
 
     /**
