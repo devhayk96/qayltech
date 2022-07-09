@@ -34,20 +34,16 @@ class OrganizationsController extends BaseController
      */
     public function index(ListRequest $request): JsonResponse
     {
-
         $organizations = Organization::query();
 
         if (is_super_admin()) {
-
             if ($countryId = $request->get('countryId')) {
                 $organizations->where('country_id', $countryId);
             }
-
+            if ($organizationName = $request->get('name')) {
+                $organizations->where('name', 'LIKE', $organizationName .'%');
+            }
         } else {
-            if ($countryId = $request->get('countryId')) {
-                $organizations->where('country_id', $countryId);
-            }
-
             $otherRoles = [
                 'country',
             ];
@@ -59,9 +55,7 @@ class OrganizationsController extends BaseController
             }
         }
 
-
         return $this->sendResponse(new OrganizationCollection($organizations->get()), 'Organizations List');
-
     }
 
     /**

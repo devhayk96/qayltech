@@ -35,25 +35,19 @@ class HospitalsController extends BaseController
      */
     public function index(ListRequest $request): JsonResponse
     {
-
         $hospitals = Hospital::query();
 
         if (is_super_admin()) {
-
             if ($countryId = $request->get('countryId')) {
                 $hospitals->where('country_id', $countryId);
             }
             if ($organizationId = $request->get('organizationId')) {
                 $hospitals->where('organization_id', $organizationId);
             }
-
+            if ($hospitalName = $request->get('name')) {
+                $hospitals->where('name', 'LIKE', $hospitalName .'%');
+            }
         } else {
-            if ($countryId = $request->get('countryId')) {
-                $hospitals->where('country_id', $countryId);
-            }
-            if ($organizationId = $request->get('organizationId')) {
-                $hospitals->where('organization_id', $organizationId);
-            }
             $otherRoles = [
                 'country',
                 'organization',
@@ -65,7 +59,6 @@ class HospitalsController extends BaseController
                 }
             }
         }
-
 
         return $this->sendResponse(new HospitalCollection($hospitals->get()), 'Hospitals List');
     }
