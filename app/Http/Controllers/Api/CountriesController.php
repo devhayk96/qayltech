@@ -32,25 +32,11 @@ class CountriesController extends BaseController
      */
     public function index(Request $request): JsonResponse
     {
-
         $countries = Country::query();
-
-        if (is_super_admin()) {
-            if ($countryId = $request->get('countryId')) {
-                $countries->where('country_id', $countryId);
-            }
-
+        if ($countryName = $request->get('name')) {
+            $countries->where('name', 'LIKE', $countryName .'%');
         }
-
-
         return $this->sendResponse(new CountryCollection($countries->get()), 'Countries List');
-
-
-//        $countries = Country::query();
-//        if ($countryName = $request->get('name')) {
-//            $countries->where('name', 'LIKE', $countryName .'%');
-//        }
-//        return $this->sendResponse($countries->get(), 'Countries List');
     }
 
     /**

@@ -36,7 +36,6 @@ class DoctorsController extends BaseController
         $doctors = Doctor::query();
 
         if (is_super_admin()) {
-
             if ($countryId = $request->get('countryId')) {
                 $doctors->where('country_id', $countryId);
             }
@@ -45,18 +44,11 @@ class DoctorsController extends BaseController
             }
             if ($hospitalId = $request->get('hospitalId')) {
                 $doctors->where('hospital_id', $hospitalId);
+            }
+            if ($doctorName = $request->get('name')) {
+                $doctors->where('name', 'LIKE', $doctorName .'%');
             }
         } else {
-            if ($countryId = $request->get('countryId')) {
-                $doctors->where('country_id', $countryId);
-            }
-            if ($organizationId = $request->get('organizationId')) {
-                $doctors->where('organization_id', $organizationId);
-            }
-            if ($hospitalId = $request->get('hospitalId')) {
-                $doctors->where('hospital_id', $hospitalId);
-            }
-
             $otherRoles = [
                 'country',
                 'organization',
@@ -70,10 +62,7 @@ class DoctorsController extends BaseController
             }
         }
 
-
         return $this->sendResponse(new DoctorCollection($doctors->get()), 'Doctors List');
-
-
     }
 
     /**
