@@ -86,7 +86,7 @@ class UserController extends Controller
             return response($relations);
         }
 
-        if(current_user_role() == Role::ALL['patient']){
+        if(current_user_role() == Role::ALL['patient'] || current_user_role() == Role::ALL['hospital_patient']){
 
             return current_user(current_user_role_name());
         }
