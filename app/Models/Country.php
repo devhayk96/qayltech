@@ -16,6 +16,13 @@ class Country extends Model
         'user_id'
     ];
 
+    public static $relationNamesForProfileData = [
+        'organizations',
+        'hospitals',
+        'doctors',
+        'patients',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -25,4 +32,20 @@ class Country extends Model
     {
         return $this->hasMany(Organization::class);
     }
+
+    public function hospitals()
+    {
+        return $this->hasMany(Hospital::class);
+    }
+
+    public function doctors()
+    {
+        return $this->hasMany(Doctor::class);
+    }
+
+    public function patients()
+    {
+        return $this->hasMany(Patient::class);
+    }
+
 }

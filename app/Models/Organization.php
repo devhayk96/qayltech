@@ -7,14 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Organization extends Model
 {
-    use SoftDeletes;
-    use HasFactory;
+    use SoftDeletes, HasFactory;
+
     protected $fillable = [
         'name',
         'address',
         'category_id',
         'country_id',
         'user_id'
+    ];
+
+    public static $relationNamesForProfileData = [
+        'hospitals',
+        'doctors',
+        'patients',
     ];
 
     public function user()
@@ -30,5 +36,20 @@ class Organization extends Model
     public function country()
     {
         return $this->belongsTo(Country::class);
+    }
+
+    public function hospitals()
+    {
+        return $this->hasMany(Hospital::class);
+    }
+
+    public function doctors()
+    {
+        return $this->hasMany(Doctor::class);
+    }
+
+    public function patients()
+    {
+        return $this->hasMany(Patient::class);
     }
 }

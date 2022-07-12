@@ -27,12 +27,6 @@ abstract class BaseController extends Controller
 
     abstract protected function modelOrRoleName(): string;
 
-    public function getModel()
-    {
-        $class = "App\Models\\".ucfirst($this->modelOrRoleName());
-        return new $class();
-    }
-
     public function getResourceModel()
     {
         return new User();
