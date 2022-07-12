@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Hospital extends Model
 {
-    use SoftDeletes;
-    use HasFactory;
+    use SoftDeletes, HasFactory;
+
     protected $fillable = [
         'name',
         'address',
@@ -16,6 +16,11 @@ class Hospital extends Model
         'organization_id',
         'country_id',
         'user_id',
+    ];
+
+    public static $relationNamesForProfileData = [
+        'doctors',
+        'patients',
     ];
 
     public function user()

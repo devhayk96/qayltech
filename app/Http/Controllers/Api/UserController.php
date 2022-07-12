@@ -16,35 +16,22 @@ class UserController extends Controller
 {
     public function profile()
     {
-        $user = User::query()->where('id', current_user()->id);
+        $model = false;
         $relations = [];
+        $roles = Role::ALL;
+        unset($roles['hospital_patient']);
 
-        if (current_user_role() == Role::ALL['country']) {
-            $relations = [
-                'organizations',
-                'hospitals',
-                'doctors',
-                'patients',
-            ];
-        } elseif (current_user_role() == Role::ALL['organization']) {
-            $relations = [
-                'hospitals',
-                'doctors',
-                'patients',
-            ];
-        } elseif (current_user_role() == Role::ALL['hospital']) {
-            $relations = [
-                'doctors',
-                'patients',
-            ];
-        } elseif (current_user_role() == Role::ALL['doctor']) {
-            $relations = [
-                'patients'
-            ];
-        } else {
-            return current_user(current_user_role_name());
+        foreach ($roles as $roleName => $roleId) {
+            if (current_user_role() == $roleId) {
+                $model = $this->getModel($roleName);
+                $relations = $model::$relationNamesForProfileData;
+            }
         }
 
-        return response()->json($user->with($relations)->first());
+        return response()->json(
+            $model ?
+                $model->where('user_id', current_user()->id)->first()->load($relations)
+                : []
+        );
     }
 }

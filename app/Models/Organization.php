@@ -7,14 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Organization extends Model
 {
-    use SoftDeletes;
-    use HasFactory;
+    use SoftDeletes, HasFactory;
+
     protected $fillable = [
         'name',
         'address',
         'category_id',
         'country_id',
         'user_id'
+    ];
+
+    public static $relationNamesForProfileData = [
+        'hospitals',
+        'doctors',
+        'patients',
     ];
 
     public function user()

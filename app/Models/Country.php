@@ -16,6 +16,13 @@ class Country extends Model
         'user_id'
     ];
 
+    public static $relationNamesForProfileData = [
+        'organizations',
+        'hospitals',
+        'doctors',
+        'patients',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

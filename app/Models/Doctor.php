@@ -1,14 +1,15 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Doctor extends Model
 {
-    use SoftDeletes;
-    use HasFactory;
+    use SoftDeletes, HasFactory;
+
     protected $fillable = [
         'first_name',
         'last_name',
@@ -17,6 +18,10 @@ class Doctor extends Model
         'country_id',
         'organization_id',
         'user_id',
+    ];
+
+    public static $relationNamesForProfileData = [
+        'patients',
     ];
 
     public function hospital()
