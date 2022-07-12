@@ -32,8 +32,19 @@ class Hospital extends Model
     {
         return $this->belongsTo(Organization::class);
     }
+
     public function devices()
     {
         return $this->hasMany(Device::class);
+    }
+
+    public function doctors()
+    {
+        return $this->hasMany(Doctor::class);
+    }
+
+    public function patients()
+    {
+        return $this->hasMany(Patient::class);
     }
 }

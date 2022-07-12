@@ -31,4 +31,19 @@ class Organization extends Model
     {
         return $this->belongsTo(Country::class);
     }
+
+    public function hospitals()
+    {
+        return $this->hasMany(Hospital::class);
+    }
+
+    public function doctors()
+    {
+        return $this->hasMany(Doctor::class);
+    }
+
+    public function patients()
+    {
+        return $this->hasMany(Patient::class);
+    }
 }

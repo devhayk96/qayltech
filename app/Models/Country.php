@@ -25,4 +25,20 @@ class Country extends Model
     {
         return $this->hasMany(Organization::class);
     }
+
+    public function hospitals()
+    {
+        return $this->hasMany(Hospital::class);
+    }
+
+    public function doctors()
+    {
+        return $this->hasMany(Doctor::class);
+    }
+
+    public function patients()
+    {
+        return $this->hasMany(Patient::class);
+    }
+
 }
