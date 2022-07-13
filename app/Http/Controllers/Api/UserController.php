@@ -19,6 +19,12 @@ class UserController extends Controller
         $model = false;
         $relations = [];
         $roles = Role::ALL;
+
+        if (current_user_role() == $roles['super_admin']) {
+            return response()->json(current_user(current_user_role_name()));
+        }
+
+        unset($roles['super_admin']);
         unset($roles['hospital_patient']);
 
         foreach ($roles as $roleName => $roleId) {
