@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\WorkoutStatuses;
 use App\Helpers\MediaHelper;
 use App\Http\Requests\Patient\WorkoutInfo\ListRequest as ListWorkoutInfoRequest;
+use App\Http\Requests\Patient\WorkoutInfo\StoreOculusRequest;
 use App\Http\Requests\Patient\WorkoutInfo\StoreRequest as StoreWorkoutInfoRequest;
 use App\Http\Resources\PatientCollection;
 use App\Http\Resources\PatientResource;
+use App\Models\PatientsWorkoutinfo;
 use App\Models\Role;
 use App\Models\Doctor;
 use App\Models\Patient;
@@ -273,32 +276,61 @@ class PatientsController extends BaseController
         return $this->sendResponse($doctor, 'Patient successfully assigned');
     }
 
-    public function workoutInfos(ListWorkoutInfoRequest $request, Patient $patient)
+    public function getWorkoutInfo(ListWorkoutInfoRequest $request, Patient $patient): JsonResponse
     {
         return $this->sendResponse($patient->workoutInfos, 'Patient workout infos list');
     }
 
-    public function storeWorkoutInfo(StoreWorkoutInfoRequest $request, Patient $patient)
+    public function startWorkout(StoreWorkoutInfoRequest $request, Patient $patient): JsonResponse
     {
         $newInfo = $patient->workoutInfos()->create([
-            'key' => $request->get('key'),
-            'status' => $request->get('status'),
+            'device_id' => $request->get('deviceId'),
+            'status' => WorkoutStatuses::START,
         ]);
 
-        $additionalInfos = $request->get('additionalInfos');
+        return $this->sendResponse($newInfo, 'Workout started');
+    }
 
-        if ($additionalInfos && !empty($additionalInfos)) {
-            foreach ($additionalInfos as $additionalInfo) {
-                $newInfo->additionalInfos()->create([
-                    'patient_id' => $patient->id,
-                    'key' => $additionalInfo['key'],
-                    'value' => $additionalInfo['value']
-                ]);
+    public function storeOculusWorkoutInfo(StoreOculusRequest $request): JsonResponse
+    {
+        $status = $selectStatus = $request->get('status');
+        $deviceId = $request->get('deviceId');
+        $patientId = PatientsWorkoutinfo::query()->where('device_id', $deviceId);
+
+        if ($status == WorkoutStatuses::START) {
+            $selectStatus = WorkoutStatuses::IN_PROGRESS;
+        } elseif ($status == WorkoutStatuses::FINISH) {
+            $selectStatus = WorkoutStatuses::IN_PROGRESS;
+        }
+
+        $patientId = $patientId
+            ->where('status', $selectStatus)
+            ->pluck('patient_id');
+        $patient = Patient::find($patientId);
+
+        if ($patient) {
+            $newInfo = $patient->workoutInfos()->create([
+                'key' => $request->get('key'),
+                'status' => $request->get('status'),
+            ]);
+
+            $additionalInfos = $request->get('additionalInfos');
+
+            if ($additionalInfos && !empty($additionalInfos)) {
+                foreach ($additionalInfos as $additionalInfo) {
+                    $newInfo->additionalInfos()->create([
+                        'patient_id' => $patient->id,
+                        'key' => $additionalInfo['key'],
+                        'value' => $additionalInfo['value']
+                    ]);
+                }
             }
         }
 
         return $this->sendResponse($newInfo, 'Workout information successfully saved');
     }
+
+
 
 
 }
