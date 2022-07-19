@@ -83,10 +83,8 @@ Route::group(['middleware' => ['cors', 'auth:api']], function () {
             Route::post('', [PatientsController::class, 'storeAdditionalInfo']);
         });
 
-        Route::group(['prefix' => 'workout-infos'], function() {
-            Route::get('', [PatientsController::class, 'workoutInfos']);
-            Route::post('', [PatientsController::class, 'storeWorkoutInfo']);
-        });
+        Route::get('workout-info', [PatientsController::class, 'getWorkoutInfo']);
+        Route::post('start-workout', [PatientsController::class, 'startWorkout']);
     });
 
     Route::get('profile', [UserController::class, 'profile']);
@@ -97,4 +95,9 @@ Route::group(['middleware' => ['cors', 'auth:api']], function () {
 Route::group(['middleware' => ['cors']], function () {
     Route::post('login', [AuthController::class, 'login']);
 //    Route::post('register','Auth\ApiAuthController@register');
+
+    Route::group(['prefix' => 'patient-workout-info'], function() {
+        Route::post('', [PatientsController::class, 'storeOculusWorkoutInfo']);
+    });
+
 });
