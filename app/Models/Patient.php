@@ -45,12 +45,12 @@ class Patient extends Model
 
     public function additionalInfos()
     {
-        return $this->hasMany(PatientsAdditionalinfo::class);
+        return $this->hasMany(PatientAdditionalInfo::class);
     }
 
     public function workoutInfos()
     {
-        return $this->hasMany(PatientsWorkoutInfo::class);
+        return $this->hasMany(PatientWorkoutInfo::class);
     }
 
     public function getImagePathAttribute()

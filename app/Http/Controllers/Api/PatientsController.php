@@ -9,12 +9,12 @@ use App\Http\Requests\Patient\WorkoutInfo\StoreOculusRequest;
 use App\Http\Requests\Patient\WorkoutInfo\StoreRequest as StoreWorkoutInfoRequest;
 use App\Http\Resources\PatientCollection;
 use App\Http\Resources\PatientResource;
-use App\Models\PatientsWorkoutInfo;
+use App\Models\PatientWorkoutInfo;
 use App\Models\Role;
 use App\Models\Doctor;
 use App\Models\Patient;
 use App\Services\User\StoreService;
-use App\Models\PatientsAdditionalinfo;
+use App\Models\PatientAdditionalInfo;
 use App\Http\Requests\Patient\ListRequest;
 use App\Http\Requests\Patient\StoreRequest;
 use App\Http\Requests\Patient\AdditionalInfo\StoreRequest as AdditionalInfoStoreRequest;
@@ -265,7 +265,7 @@ class PatientsController extends BaseController
 
         if ($additionalInfos && !empty($additionalInfos)) {
             foreach ($additionalInfos as $additionalInfo){
-                PatientsAdditionalinfo::create([
+                PatientAdditionalInfo::create([
                     'patient_id' => $request->get('patientId'),
                     'key' => $additionalInfo['key'],
                     'value' => $additionalInfo['value']
@@ -295,7 +295,7 @@ class PatientsController extends BaseController
     {
         $status = $selectStatus = $request->get('status');
         $deviceId = $request->get('deviceId');
-        $patientId = PatientsWorkoutInfo::query()->where('device_id', $deviceId);
+        $patientId = PatientWorkoutInfo::query()->where('device_id', $deviceId);
 
         if ($status == WorkoutStatuses::START) {
             $selectStatus = WorkoutStatuses::IN_PROGRESS;
