@@ -9,7 +9,7 @@ use App\Http\Requests\Patient\WorkoutInfo\StoreOculusRequest;
 use App\Http\Requests\Patient\WorkoutInfo\StoreRequest as StoreWorkoutInfoRequest;
 use App\Http\Resources\PatientCollection;
 use App\Http\Resources\PatientResource;
-use App\Models\PatientsWorkoutinfo;
+use App\Models\PatientsWorkoutInfo;
 use App\Models\Role;
 use App\Models\Doctor;
 use App\Models\Patient;
@@ -295,7 +295,7 @@ class PatientsController extends BaseController
     {
         $status = $selectStatus = $request->get('status');
         $deviceId = $request->get('deviceId');
-        $patientId = PatientsWorkoutinfo::query()->where('device_id', $deviceId);
+        $patientId = PatientsWorkoutInfo::query()->where('device_id', $deviceId);
 
         if ($status == WorkoutStatuses::START) {
             $selectStatus = WorkoutStatuses::IN_PROGRESS;
@@ -303,9 +303,7 @@ class PatientsController extends BaseController
             $selectStatus = WorkoutStatuses::IN_PROGRESS;
         }
 
-        $patientId = $patientId
-            ->where('status', $selectStatus)
-            ->pluck('patient_id');
+        $patientId->where('status', $selectStatus)->pluck('patient_id');
         $patient = Patient::find($patientId);
 
         if ($patient) {
@@ -325,9 +323,11 @@ class PatientsController extends BaseController
                     ]);
                 }
             }
+
+            return $this->sendResponse($newInfo, 'Workout information successfully saved');
         }
 
-        return $this->sendResponse($newInfo, 'Workout information successfully saved');
+        return $this->sendError([], "Patient did'nt find or didn't start the workout");
     }
 
 
