@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PatientsWorkoutInfo extends Model
+class PatientWorkoutInfo extends Model
 {
     use HasFactory;
 
@@ -19,7 +19,7 @@ class PatientsWorkoutInfo extends Model
 
     public function additionalInfos()
     {
-        return $this->hasMany(PatientsAdditionalinfo::class);
+        return $this->hasMany(PatientAdditionalInfo::class);
     }
 
 
