@@ -23,7 +23,6 @@ class PatientAdditionalInfosTable extends Migration
 
             $table->string('key');
             $table->string('value');
-            $table->unique(['patient_id', 'key', 'value']);
             $table->timestamps();
         });
     }
