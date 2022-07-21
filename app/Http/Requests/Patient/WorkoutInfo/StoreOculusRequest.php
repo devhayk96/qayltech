@@ -15,8 +15,8 @@ class StoreOculusRequest extends FormRequest
     public function rules()
     {
         return [
-            'deviceId' => 'required|exists:devices,id',
-            'additionalInfos' => 'required|array',
+            'deviceCode' => 'required|exists:devices,code',
+            'additionalInfos' => 'required|string',
             'status' => 'required|in:'. implode(",",[WorkoutStatuses::IN_PROGRESS, WorkoutStatuses::FINISH])
         ];
     }

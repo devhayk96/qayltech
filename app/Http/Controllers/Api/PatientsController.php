@@ -9,6 +9,7 @@ use App\Http\Requests\Patient\WorkoutInfo\StoreOculusRequest;
 use App\Http\Requests\Patient\WorkoutInfo\StoreRequest as StoreWorkoutInfoRequest;
 use App\Http\Resources\PatientCollection;
 use App\Http\Resources\PatientResource;
+use App\Models\Device;
 use App\Models\PatientWorkoutInfo;
 use App\Models\Role;
 use App\Models\Doctor;
@@ -22,6 +23,7 @@ use App\Http\Requests\Patient\AssignPatientRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
@@ -283,6 +285,20 @@ class PatientsController extends BaseController
 
     public function startWorkout(StoreWorkoutInfoRequest $request, Patient $patient): JsonResponse
     {
+        $deviceId = $request->get('deviceId');
+
+        $workoutInfo = $patient->workoutInfos()
+            ->where([
+                'device_id' => $deviceId,
+                'status' => WorkoutStatuses::START,
+            ])
+            ->whereDate('created_at', Carbon::today())
+            ->first();
+
+        if ($workoutInfo) {
+            return $this->sendResponse([], 'Workout already started');
+        }
+
         $newInfo = $patient->workoutInfos()->create([
             'device_id' => $request->get('deviceId'),
             'status' => WorkoutStatuses::START,
@@ -294,40 +310,56 @@ class PatientsController extends BaseController
     public function storeOculusWorkoutInfo(StoreOculusRequest $request): JsonResponse
     {
         $status = $selectStatus = $request->get('status');
-        $deviceId = $request->get('deviceId');
-        $patientId = PatientWorkoutInfo::query()->where('device_id', $deviceId);
+        $deviceId = Device::query()
+            ->where('code', $request->get('deviceCode'))
+            ->pluck('id')
+            ->first();
+        $patientId = PatientWorkoutInfo::query()
+            ->where('device_id', $deviceId)
+            ->whereDate('created_at', Carbon::today());
 
-        if ($status == WorkoutStatuses::START) {
-            $selectStatus = WorkoutStatuses::IN_PROGRESS;
+        if ($status == WorkoutStatuses::IN_PROGRESS) {
+            $selectStatus = WorkoutStatuses::START;
         } elseif ($status == WorkoutStatuses::FINISH) {
             $selectStatus = WorkoutStatuses::IN_PROGRESS;
         }
 
-        $patientId->where('status', $selectStatus)->pluck('patient_id');
+        $patientId = $patientId
+            ->where('status', $selectStatus)
+            ->pluck('patient_id')->first();
         $patient = Patient::find($patientId);
 
         if ($patient) {
-            $newInfo = $patient->workoutInfos()->create([
-                'key' => $request->get('key'),
-                'status' => $request->get('status'),
-            ]);
+            DB::beginTransaction();
 
-            $additionalInfos = $request->get('additionalInfos');
+            try {
+                $newInfo = $patient->workoutInfos()->create([
+                    'device_id' => $deviceId,
+                    'status' => $status,
+                ]);
 
-            if ($additionalInfos && !empty($additionalInfos)) {
-                foreach ($additionalInfos as $additionalInfo) {
-                    $newInfo->additionalInfos()->create([
-                        'patient_id' => $patient->id,
-                        'key' => $additionalInfo['key'],
-                        'value' => $additionalInfo['value']
-                    ]);
+                $additionalInfos = json_decode($request->get('additionalInfos'));
+
+                if ($additionalInfos && !empty($additionalInfos)) {
+                    foreach ($additionalInfos as $key => $value) {
+                        $newInfo->additionalInfos()->create([
+                            'patient_id' => $patient->id,
+                            'key' => $key,
+                            'value' => $value
+                        ]);
+                    }
                 }
+
+                DB::commit();
+            } catch (\Exception $exception) {
+                DB::rollBack();
+                return $this->sendError($exception->getMessage(), 500);
             }
 
             return $this->sendResponse($newInfo, 'Workout information successfully saved');
         }
 
-        return $this->sendError([], "Patient did'nt find or didn't start the workout");
+        return $this->sendError("Patient did'nt find or didn't start the workout", 400);
     }
 
 

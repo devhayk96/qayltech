@@ -19,7 +19,10 @@ class PatientWorkoutInfo extends Model
 
     public function additionalInfos()
     {
-        return $this->hasMany(PatientAdditionalInfo::class);
+        return $this->hasMany(
+            PatientAdditionalInfo::class,
+            'workout_id'
+        );
     }
 
 
