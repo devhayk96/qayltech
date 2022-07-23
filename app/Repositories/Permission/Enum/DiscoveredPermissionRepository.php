@@ -3,6 +3,7 @@
 namespace App\Repositories\Permission\Enum;
 
 use App\Enums\Permissions\CountryPermissions;
+use App\Enums\Permissions\DevicePermissions;
 use App\Enums\Permissions\DoctorPermissions;
 use App\Enums\Permissions\HospitalPermissions;
 use App\Enums\Permissions\OrganizationPermissions;
@@ -24,6 +25,7 @@ class DiscoveredPermissionRepository implements RepositoryInterface
                 'hospitals'     => HospitalPermissions::get(),
                 'doctors'       => DoctorPermissions::get(),
                 'patients'      => PatientPermissions::get(),
+                'devices'       => DevicePermissions::get(),
             ]
         );
     }

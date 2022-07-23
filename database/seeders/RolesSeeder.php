@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Permissions\DevicePermissions;
 use App\Models\Role as UserRole;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use App\Enums\Permissions\OrganizationPermissions;
 use App\Enums\Permissions\DoctorPermissions;
@@ -19,17 +21,21 @@ class RolesSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('role_has_permissions')->truncate();
+
         $permissionsArr = [
             'country' => [
                 OrganizationPermissions::VIEW,
                 HospitalPermissions::VIEW,
                 DoctorPermissions::VIEW,
                 PatientPermissions::VIEW,
+                DevicePermissions::VIEW,
             ],
             'organization' => [
                 HospitalPermissions::VIEW,
                 DoctorPermissions::VIEW,
                 PatientPermissions::VIEW,
+                DevicePermissions::VIEW,
             ],
             'hospital' => [
                 DoctorPermissions::VIEW,
@@ -38,10 +44,12 @@ class RolesSeeder extends Seeder
                 PatientPermissions::CREATE,
                 PatientPermissions::ASSIGN,
                 PatientPermissions::DELETE,
+                DevicePermissions::VIEW,
             ],
             'doctor' => [
                 PatientPermissions::VIEW,
                 PatientPermissions::ASSIGN,
+                DevicePermissions::VIEW,
             ],
             'patient' => [
                 PatientPermissions::VIEW_PERSONAL,
