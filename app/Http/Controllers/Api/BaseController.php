@@ -14,8 +14,8 @@ abstract class BaseController extends Controller
     public function __construct()
     {
         $this->permissionKeyName = $this->resourceName();
-        $this->middleware(["permission:{$this->permissionKeyName} view,api"])->only('index');
-        $this->middleware(["permission:{$this->permissionKeyName} viewPersonal,api"])->only('show');
+//        $this->middleware(["permission:{$this->permissionKeyName} view,api"])->only('index');
+//        $this->middleware(["permission:{$this->permissionKeyName} viewPersonal,api"])->only('show');
         $this->middleware(["permission:{$this->permissionKeyName} create,api"])->only(['store']);
         $this->middleware(["permission:{$this->permissionKeyName} update,api"])->only(['update']);
         $this->middleware(["permission:{$this->permissionKeyName} delete,api"])->only(['delete']);

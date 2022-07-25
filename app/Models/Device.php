@@ -26,4 +26,24 @@ class Device extends Model
         return $this->belongsTo(Hospital::class);
     }
 
+    public function doctors()
+    {
+        return $this->belongsToMany(
+            Doctor::class,
+            'doctor_patient',
+            'doctor_id'
+        );
+    }
+
+    public function patients()
+    {
+        return $this->belongsToMany(
+            Patient::class,
+            'doctor_patient',
+            'patient_id'
+        );
+    }
+
+
+
 }
