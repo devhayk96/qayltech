@@ -34,41 +34,50 @@ class DevicesController extends BaseController
     {
         $userId = current_user()->id;
         $devices = Device::query();
+        $columnNames = [];
+        $relationColumnNames = [];
 
         if (current_user_role() == Role::ALL['organization']){
             $orgId = Organization::query()->where('user_id', $userId)->pluck('id');
             $devices->where('organization_id', $orgId);
-
-            if ($hospitalId = $request->get('hospitalId')) {
-                $devices->where('hospital_id', $hospitalId);
-            }
+            $columnNames = ['hospital_id'];
         } elseif (current_user_role() == Role::ALL['country']){
             $cntId = Country::query()->where('user_id', $userId)->pluck('id');
             $devices->where('country_id', $cntId);
-
-            if ($organizationId = $request->get('organizationId')) {
-                $devices->where('organization_id', $organizationId);
-            }
-
-            if ($hospitalId = $request->get('hospitalId')) {
-                $devices->where('hospital_id', $hospitalId);
-            }
+            $columnNames = ['organization_id', 'hospital_id'];
+        } elseif (is_doctor()) {
+            $devices->whereHas('doctors', function ($q) {
+                $q->where('doctor_id', current_user_role());
+            });
         } elseif (is_super_admin()) {
-            if ($countryId = $request->get('countryId')) {
-                $devices->where('country_id', $countryId);
-            }
+            $columnNames = ['country_id', 'organization_id', 'hospital_id'];
+            $relationColumnNames = ['doctor_id', 'patient_id'];
+        } else {
+            return $this->sendResponse([], 'Empty result');
+        }
 
-            if ($organizationId = $request->get('organizationId')) {
-                $devices->where('organization_id', $organizationId);
+        if (!empty($columnNames)) {
+            foreach ($columnNames as $columnName) {
+                $paramName = str_replace('_id', 'Id', $columnName);
+                if ($param = $request->get($paramName)) {
+                    $devices->where($columnName, $param);
+                }
             }
+        }
 
-            if ($hospitalId = $request->get('hospitalId')) {
-                $devices->where('hospital_id', $hospitalId);
+        if (!empty($relationColumnNames)) {
+            foreach ($relationColumnNames as $relationColumnName) {
+                $paramName = str_replace('_id', 'Id', $relationColumnName);
+                if ($param = $request->get($paramName)) {
+                    $relationName = str_replace('_id', 's', $relationColumnName);
+                    $devices->whereHas($relationName, function ($q) use ($relationColumnName, $param) {
+                        $q->where($relationColumnName, $param);
+                    });
+                }
             }
         }
 
         return $this->sendResponse($devices->get(), 'List of devices');
-
     }
 
     /**
