@@ -228,7 +228,7 @@ class PatientsController extends BaseController
      * @param Patient $patient
      * @return JsonResponse
      */
-    public function additionalInfos(Patient $patient)
+    public function getAdditionalInfos(Patient $patient)
     {
         return $this->sendResponse($patient->additionalInfos, 'Patient additional infos list');
     }
@@ -280,7 +280,32 @@ class PatientsController extends BaseController
 
     public function getWorkoutInfo(ListWorkoutInfoRequest $request, Patient $patient): JsonResponse
     {
-        return $this->sendResponse($patient->workoutInfos, 'Patient workout infos list');
+        $workoutInfos = PatientWorkoutInfo::query()
+            ->with('additionalInfos')
+            ->whereHas('additionalInfos', function ($q) use ($request) {
+                if ($game = $request->get('game')) {
+                    $q->where('key', $game);
+                }
+            })
+            ->where('patient_id', $patient->id)
+            ->where('created_at', '>=', Carbon::now()->subMonth());
+
+        if ($deviceId = $request->get('deviceId')) {
+            $workoutInfos = $workoutInfos->where('device_id', $deviceId);
+        }
+
+        $additionalInfos = [];
+
+        $workoutInfos = $workoutInfos
+//            ->groupBy('created_at')
+            ->get();
+//            ->each(function ($workoutInfo) use ($additionalInfos) {
+//                $additionalInfos[$workoutInfo->created_at][] = $workoutInfo;
+//                return $q->keyBy('created_at');
+//            });
+        dd($workoutInfos);
+
+        return $this->sendResponse($additionalInfos, 'Patient workout infos list');
     }
 
     public function startWorkout(StoreWorkoutInfoRequest $request, Patient $patient): JsonResponse
@@ -363,10 +388,14 @@ class PatientsController extends BaseController
             ->where('code', $request->get('deviceCode'))
             ->pluck('id')
             ->first();
+        $game = $request->get('game');
         $workoutInfo = PatientWorkoutInfo::query()
-            ->where('device_id', $deviceId)
             ->whereDate('created_at', Carbon::today())
-            ->where(['status' => WorkoutStatuses::START])
+            ->where([
+                'game' => $game,
+                'device_id' => $deviceId,
+                'status' => WorkoutStatuses::START,
+            ])
             ->select('patient_id', 'id')->first();
 
         if ($workoutInfo) {

@@ -14,7 +14,8 @@ class ListRequest extends FormRequest
     public function rules()
     {
         return [
-            'deviceId' => 'required|exists:devices,id',
+            'deviceId' => 'nullable|exists:devices,id',
+            'game' => 'nullable|string',
         ];
     }
 }
