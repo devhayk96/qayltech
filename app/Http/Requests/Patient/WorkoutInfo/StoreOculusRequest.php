@@ -16,7 +16,6 @@ class StoreOculusRequest extends FormRequest
     {
         return [
             'deviceCode' => 'required|exists:devices,code',
-            'additionalInfos' => 'required|string',
             'status' => 'required|in:'. implode(",",[WorkoutStatuses::IN_PROGRESS, WorkoutStatuses::FINISH])
         ];
     }
