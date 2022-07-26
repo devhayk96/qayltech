@@ -79,7 +79,7 @@ Route::group(['middleware' => ['cors', 'auth:api']], function () {
         Route::post('restore', [PatientsController::class, 'restore']);
 
         Route::group(['prefix' => 'additional-infos'], function() {
-            Route::get('', [PatientsController::class, 'additionalInfos']);
+            Route::get('', [PatientsController::class, 'getAdditionalInfos']);
             Route::post('', [PatientsController::class, 'storeAdditionalInfo']);
         });
 
