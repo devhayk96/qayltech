@@ -309,41 +309,78 @@ class PatientsController extends BaseController
 
     public function storeOculusWorkoutInfo(StoreOculusRequest $request): JsonResponse
     {
-        $status = $selectStatus = $request->get('status');
+//        $status = $selectStatus = $request->get('status');
+//        $deviceId = Device::query()
+//            ->where('code', $request->get('deviceCode'))
+//            ->pluck('id')
+//            ->first();
+//        $patientId = PatientWorkoutInfo::query()
+//            ->where('device_id', $deviceId)
+//            ->whereDate('created_at', Carbon::today());
+//
+//        if ($status == WorkoutStatuses::IN_PROGRESS) {
+//            $selectStatus = WorkoutStatuses::START;
+//        } elseif ($status == WorkoutStatuses::FINISH) {
+//            $selectStatus = WorkoutStatuses::IN_PROGRESS;
+//        }
+//
+//        $patientId = $patientId
+//            ->where('status', $selectStatus)
+//            ->pluck('patient_id')->first();
+//        $patient = Patient::find($patientId);
+//
+//        if ($patient) {
+//            DB::beginTransaction();
+//
+//            try {
+//                $newInfo = $patient->workoutInfos()->create([
+//                    'device_id' => $deviceId,
+//                    'status' => $status,
+//                ]);
+//
+//                $additionalInfos = json_decode($request->get('additionalInfos'));
+//
+//                if ($additionalInfos && !empty($additionalInfos)) {
+//                    foreach ($additionalInfos as $key => $value) {
+//                        $newInfo->additionalInfos()->create([
+//                            'patient_id' => $patient->id,
+//                            'key' => $key,
+//                            'value' => $value
+//                        ]);
+//                    }
+//                }
+//
+//                DB::commit();
+//            } catch (\Exception $exception) {
+//                DB::rollBack();
+//                return $this->sendError($exception->getMessage(), 500);
+//            }
+//
+//            return $this->sendResponse($newInfo, 'Workout information successfully saved');
+//        }
+
         $deviceId = Device::query()
             ->where('code', $request->get('deviceCode'))
             ->pluck('id')
             ->first();
-        $patientId = PatientWorkoutInfo::query()
+        $workoutInfo = PatientWorkoutInfo::query()
             ->where('device_id', $deviceId)
-            ->whereDate('created_at', Carbon::today());
+            ->whereDate('created_at', Carbon::today())
+            ->where(['status' => WorkoutStatuses::START])
+            ->select('patient_id', 'id')->first();
 
-        if ($status == WorkoutStatuses::IN_PROGRESS) {
-            $selectStatus = WorkoutStatuses::START;
-        } elseif ($status == WorkoutStatuses::FINISH) {
-            $selectStatus = WorkoutStatuses::IN_PROGRESS;
-        }
-
-        $patientId = $patientId
-            ->where('status', $selectStatus)
-            ->pluck('patient_id')->first();
-        $patient = Patient::find($patientId);
-
-        if ($patient) {
+        if ($workoutInfo) {
             DB::beginTransaction();
 
             try {
-                $newInfo = $patient->workoutInfos()->create([
-                    'device_id' => $deviceId,
-                    'status' => $status,
+                $workoutInfo->update([
+                    'status' => WorkoutStatuses::FINISH,
                 ]);
 
-                $additionalInfos = json_decode($request->get('additionalInfos'));
-
-                if ($additionalInfos && !empty($additionalInfos)) {
-                    foreach ($additionalInfos as $key => $value) {
-                        $newInfo->additionalInfos()->create([
-                            'patient_id' => $patient->id,
+                foreach (PatientAdditionalInfo::KEYS as $key) {
+                    if ($value = $request->get($key)) {
+                        $workoutInfo->additionalInfos()->create([
+                            'patient_id' => $workoutInfo->patient_id,
                             'key' => $key,
                             'value' => $value
                         ]);
@@ -356,7 +393,7 @@ class PatientsController extends BaseController
                 return $this->sendError($exception->getMessage(), 500);
             }
 
-            return $this->sendResponse($newInfo, 'Workout information successfully saved');
+            return $this->sendResponse($workoutInfo, 'Workout information successfully saved');
         }
 
         return $this->sendError("Patient did'nt find or didn't start the workout", 400);
