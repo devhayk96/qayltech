@@ -281,31 +281,30 @@ class PatientsController extends BaseController
     public function getWorkoutInfo(ListWorkoutInfoRequest $request, Patient $patient): JsonResponse
     {
         $workoutInfos = PatientWorkoutInfo::query()
-            ->with('additionalInfos')
-            ->whereHas('additionalInfos', function ($q) use ($request) {
-                if ($game = $request->get('game')) {
-                    $q->where('key', $game);
-                }
-            })
+            ->selectRaw('DATE(created_at) as date')
+            ->selectRaw('SUM(walk_count) as walk_count')
+            ->selectRaw('SUM(steps_count) as steps_count')
+            ->selectRaw('SUM(steps_opening) as steps_opening')
+            ->selectRaw('SUM(speed) as speed')
+            ->selectRaw('SUM(passed_way) as passed_way')
+            ->selectRaw('SUM(calories) as calories')
+            ->selectRaw('SUM(spent_time) as spent_time')
             ->where('patient_id', $patient->id)
             ->where('created_at', '>=', Carbon::now()->subMonth());
+
+        if ($game = $request->get('game')) {
+            $workoutInfos = $workoutInfos->where('game', $game);
+        }
 
         if ($deviceId = $request->get('deviceId')) {
             $workoutInfos = $workoutInfos->where('device_id', $deviceId);
         }
 
-        $additionalInfos = [];
-
         $workoutInfos = $workoutInfos
-//            ->groupBy('created_at')
-            ->get();
-//            ->each(function ($workoutInfo) use ($additionalInfos) {
-//                $additionalInfos[$workoutInfo->created_at][] = $workoutInfo;
-//                return $q->keyBy('created_at');
-//            });
-        dd($workoutInfos);
+            ->groupBy('date')
+            ->orderBy('date', 'DESC');
 
-        return $this->sendResponse($additionalInfos, 'Patient workout infos list');
+        return $this->sendResponse($workoutInfos->get(), 'Patient workout infos list');
     }
 
     public function startWorkout(StoreWorkoutInfoRequest $request, Patient $patient): JsonResponse
@@ -339,36 +338,33 @@ class PatientsController extends BaseController
             ->where('code', $request->get('deviceCode'))
             ->pluck('id')
             ->first();
+
         $workoutInfo = PatientWorkoutInfo::query()
+            ->select('patient_id', 'id')
             ->whereDate('created_at', Carbon::today())
             ->where([
                 'device_id' => $deviceId,
                 'status' => WorkoutStatuses::START,
             ])
-            ->select('patient_id', 'id')->first();
+            ->first();
 
         if ($workoutInfo) {
-            DB::beginTransaction();
-
             try {
                 $workoutInfo->update([
-                    'game' => $request->get('game'),
                     'status' => WorkoutStatuses::FINISH,
+                    'game' => $request->get('game'),
+                    'walk_count' => $request->get('walk_count'),
+                    'steps_count' => $request->get('steps_count'),
+                    'steps_opening' => $request->get('steps_opening'),
+                    'speed' => $request->get('speed'),
+                    'passed_way' => $request->get('passed_way'),
+                    'calories' => $request->get('calories'),
+                    'spent_time' => $request->get('spent_time'),
+                    'key1' => $request->get('key1'),
+                    'key2' => $request->get('key2'),
+                    'key3' => $request->get('key3'),
                 ]);
-
-                foreach (PatientAdditionalInfo::KEYS as $key) {
-                    if ($value = $request->get($key)) {
-                        $workoutInfo->additionalInfos()->create([
-                            'patient_id' => $workoutInfo->patient_id,
-                            'key' => $key,
-                            'value' => $value
-                        ]);
-                    }
-                }
-
-                DB::commit();
             } catch (\Exception $exception) {
-                DB::rollBack();
                 return $this->sendError($exception->getMessage(), 500);
             }
 
