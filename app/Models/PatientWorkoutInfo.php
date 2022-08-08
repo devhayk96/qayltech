@@ -13,17 +13,20 @@ class PatientWorkoutInfo extends Model
         'patient_id',
         'device_id',
         'status',
+        'game',
+        'walk_count',
+        'steps_count',
+        'steps_opening',
+        'speed',
+        'passed_way',
+        'calories',
+        'spent_time',
+        'key1',
+        'key2',
+        'key3',
     ];
 
     protected $table = 'patient_workout_infos';
-
-    public function additionalInfos()
-    {
-        return $this->hasMany(
-            PatientAdditionalInfo::class,
-            'workout_id'
-        );
-    }
 
 
 }

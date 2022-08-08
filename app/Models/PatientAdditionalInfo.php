@@ -18,17 +18,4 @@ class PatientAdditionalInfo extends Model
 
     protected $table = 'patient_additional_infos';
 
-    const KEYS = [
-        'walk_count',
-        'steps_count',
-        'steps_opening',
-        'speed',
-        'passed_way',
-        'calories',
-        'spent_time',
-        'key1',
-        'key2',
-        'key3',
-    ];
-
 }

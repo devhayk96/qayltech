@@ -18,9 +18,6 @@ class PatientAdditionalInfosTable extends Migration
             $table->foreignId('patient_id')
                 ->constrained('patients')->cascadeOnDelete();
 
-            $table->foreignId('workout_id')->nullable()
-                ->constrained('patient_workout_infos')->nullOnDelete();
-
             $table->string('key');
             $table->string('value');
             $table->timestamps();
