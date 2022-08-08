@@ -18,7 +18,7 @@ class CreatePatientWorkoutInfos extends Migration
             $table->foreignId('patient_id')->constrained('patients')->cascadeOnDelete();
             $table->foreignId('device_id')->constrained('devices')->cascadeOnDelete();
 
-            $table->string('game');
+            $table->string('game')->nullable();
             $table->tinyInteger('status');
             $table->timestamps();
         });
