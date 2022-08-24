@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Device extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'code',
         'user_id',

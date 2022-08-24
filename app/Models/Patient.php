@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Patient extends Model
 {
-    use SoftDeletes;
-    use HasFactory;
+    use SoftDeletes, HasFactory;
 
     protected $fillable = [
         'user_id',
@@ -26,6 +25,10 @@ class Patient extends Model
         'is_individual',
         'image',
         'pdf',
+    ];
+
+    public static $relationNamesForProfileData = [
+
     ];
 
     public function user()

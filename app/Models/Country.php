@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Country extends Model
 {
-    use SoftDeletes;
-    use HasFactory;
+    use SoftDeletes, HasFactory;
 
     protected $fillable = [
         'name',
