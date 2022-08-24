@@ -77,12 +77,13 @@ class PatientsController extends BaseController
                 $patients->where('name', 'LIKE', $patientName .'%');
             }
         } elseif (is_doctor()) {
-
             $currentUser = current_user([Role::ALL['doctor']]);
             $doctorId = Doctor::query()->where('user_id', $currentUser->id)->value('id');
             $patients->whereHas('doctors', function ($query) use ($doctorId) {
                 $query->where('doctor_id', $doctorId);
             });
+        } elseif (is_patient()) {
+            return $this->sendError(["You don't have permission to see patients list"], 403);
         } else {
             $otherRoles = [
                 'country',
@@ -154,7 +155,7 @@ class PatientsController extends BaseController
 
 
             $patient = (new Patient())->fill([
-                'user_id' => $patientUser['id'],
+                'user_id' => $patientUser['user_id'],
                 'country_id' => $request->get('countryId'),
                 'organization_id' => $request->get('organizationId'),
                 'hospital_id' => $request->get('hospitalId'),
@@ -184,6 +185,8 @@ class PatientsController extends BaseController
                 }
 
                 DB::commit();
+
+                $patientUser['patient_id'] = $patient->id;
                 return $this->sendResponse($patientUser, 'Patient successfully created');
             }
 
