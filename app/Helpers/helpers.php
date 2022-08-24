@@ -111,6 +111,12 @@ if (! function_exists('is_doctor')) {
     }
 }
 
+if (! function_exists('is_patient')) {
+    function is_patient()
+    {
+        return current_user_role() == Role::ALL['patient'];
+    }
+}
 
 if (! function_exists('generate_user_password')) {
     function generate_user_password($length = 10)
