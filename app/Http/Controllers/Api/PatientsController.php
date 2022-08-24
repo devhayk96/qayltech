@@ -154,7 +154,7 @@ class PatientsController extends BaseController
 
 
             $patient = (new Patient())->fill([
-                'user_id' => $patientUser['id'],
+                'user_id' => $patientUser['user_id'],
                 'country_id' => $request->get('countryId'),
                 'organization_id' => $request->get('organizationId'),
                 'hospital_id' => $request->get('hospitalId'),
@@ -184,6 +184,8 @@ class PatientsController extends BaseController
                 }
 
                 DB::commit();
+
+                $patientUser['patient_id'] = $patient->id;
                 return $this->sendResponse($patientUser, 'Patient successfully created');
             }
 
