@@ -39,7 +39,7 @@ class UserController extends Controller
         if ($model) {
             $profile = $model->where('user_id', current_user()->id)->first()->load($relations);
             if ($profile->image) {
-                $profile->image = $profile->imagePath;
+                $profile->image_path = $profile->imagePath;
             }
         }
 
