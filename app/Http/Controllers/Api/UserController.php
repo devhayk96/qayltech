@@ -34,10 +34,15 @@ class UserController extends Controller
             }
         }
 
-        return response()->json(
-            $model ?
-                $model->where('user_id', current_user()->id)->first()->load($relations)
-                : []
-        );
+        $profile = [];
+
+        if ($model) {
+            $profile = $model->where('user_id', current_user()->id)->first()->load($relations);
+            if ($profile->image) {
+                $profile->image = $profile->imagePath;
+            }
+        }
+
+        return response()->json($profile);
     }
 }
