@@ -15,7 +15,7 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'deviceId' => 'required|exists:devices,id'
+            'deviceCode' => 'required|exists:devices,code',
         ];
     }
 }

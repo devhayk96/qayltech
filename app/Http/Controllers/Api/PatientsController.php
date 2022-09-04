@@ -314,7 +314,8 @@ class PatientsController extends BaseController
 
     public function startWorkout(StoreWorkoutInfoRequest $request, Patient $patient): JsonResponse
     {
-        $deviceId = $request->get('deviceId');
+        $deviceCode = $request->get('deviceCode');
+        $deviceId = Device::query()->where(['code' => $deviceCode])->first();
 
         $workoutInfo = $patient->workoutInfos()
             ->where([
