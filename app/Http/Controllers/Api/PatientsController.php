@@ -315,11 +315,11 @@ class PatientsController extends BaseController
     public function startWorkout(StoreWorkoutInfoRequest $request, Patient $patient): JsonResponse
     {
         $deviceCode = $request->get('deviceCode');
-        $deviceId = Device::query()->where(['code' => $deviceCode])->first();
+        $device = Device::query()->where(['code' => $deviceCode])->first();
 
         $workoutInfo = $patient->workoutInfos()
             ->where([
-                'device_id' => $deviceId,
+                'device_id' => $device->id,
                 'status' => WorkoutStatuses::START,
             ])
             ->whereDate('created_at', Carbon::today())
@@ -331,7 +331,7 @@ class PatientsController extends BaseController
 
         $newInfo = $patient->workoutInfos()
             ->create([
-                'device_id' => $deviceId,
+                'device_id' => $device->id,
                 'status' => WorkoutStatuses::START,
             ]);
 
