@@ -6,6 +6,7 @@ use App\Http\Requests\Device\StoreRequest;
 use App\Http\Requests\Device\ListRequest;
 use App\Models\Country;
 use App\Models\Device;
+use App\Models\Doctor;
 use App\Models\Organization;
 use App\Models\Role;
 use Illuminate\Http\JsonResponse;
@@ -42,13 +43,10 @@ class DevicesController extends BaseController
             $devices->where('organization_id', $orgId);
             $columnNames = ['hospital_id'];
         } elseif (current_user_role() == Role::ALL['country']){
-            $cntId = Country::query()->where('user_id', $userId)->pluck('id');
-            $devices->where('country_id', $cntId);
+            $devices->where('country_id', current_user(['country'])->country->id);
             $columnNames = ['organization_id', 'hospital_id'];
         } elseif (is_doctor()) {
-            $devices->whereHas('doctors', function ($q) {
-                $q->where('doctor_id', current_user_role());
-            });
+            $devices->where('hospital_id', current_user(['doctor'])->doctor->hospital_id);
         } elseif (is_super_admin()) {
             $columnNames = ['country_id', 'organization_id', 'hospital_id'];
             $relationColumnNames = ['doctor_id', 'patient_id'];

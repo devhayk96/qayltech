@@ -326,7 +326,7 @@ class PatientsController extends BaseController
             ->first();
 
         if ($workoutInfo) {
-            return $this->sendResponse([], 'Workout already started');
+            return $this->sendResponse([], 'Workout already started or device already in use');
         }
 
         $newInfo = $patient->workoutInfos()
@@ -348,16 +348,14 @@ class PatientsController extends BaseController
         $workoutInfo = PatientWorkoutInfo::query()
             ->select('patient_id', 'id')
             ->whereDate('created_at', Carbon::today())
-            ->where([
-                'device_id' => $deviceId,
-                'status' => WorkoutStatuses::START,
-            ])
+            ->where('device_id', $deviceId)
+            ->whereIn('status', [WorkoutStatuses::START, WorkoutStatuses::IN_PROGRESS])
             ->first();
 
         if ($workoutInfo) {
             try {
                 $workoutInfo->update([
-                    'status' => WorkoutStatuses::FINISH,
+                    'status' => $request->get('status'),
                     'game' => $request->get('game'),
                     'walk_count' => $request->get('walk_count'),
                     'steps_count' => $request->get('steps_count'),
